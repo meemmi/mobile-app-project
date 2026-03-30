@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Paw Tracker</string>
+    <string name="tracking_start">Start</string>
+    <string name="tracking_stop">Stop</string>
+    <string name="tracking_distance">Distance</string>
+    <string name="tracking_time">Time</string>
 </resources>
