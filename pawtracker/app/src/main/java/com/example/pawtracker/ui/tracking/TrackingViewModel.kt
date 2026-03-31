@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 
+
 /**
  * Unified TrackingViewModel
  * - Uses GPSRepository for real GPS
@@ -41,7 +42,12 @@ class TrackingViewModel(
             LocationPoint(60.1705, 24.9392),
             LocationPoint(60.1712, 24.9401),
             LocationPoint(60.1720, 24.9410),
-            LocationPoint(60.1730, 24.9420)
+            LocationPoint(60.1730, 24.9420),
+            LocationPoint(60.1736, 24.9428),
+            LocationPoint(60.1740, 24.9432),
+            LocationPoint(60.1744, 24.9436),
+            LocationPoint(60.1748, 24.9440),
+            LocationPoint(60.1752, 24.9445),
         )
         for (point in mockRoute) {
             delay(1000) // emit every second
