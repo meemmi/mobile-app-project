@@ -3,7 +3,6 @@ package com.example.pawtracker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -11,45 +10,49 @@ import com.example.pawtracker.data.repository.GPSRepository
 import com.example.pawtracker.ui.theme.PawTrackerTheme
 import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
-
+import androidx.activity.enableEdgeToEdge
 
 class MainActivity : ComponentActivity() {
+
+    // 1. Create repository + ViewModel
+    private val gpsRepository by lazy { GPSRepository(this) }
+    private val trackingViewModel by lazy { TrackingViewModel(gpsRepository) }
+
+    // 2. Permission launcher must be inside class
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             // You can show a message if needed
         }
 
+    // 3. Permission request function
     private fun requestLocationPermission() {
         requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Ask for permission
+        // 4. Ask for permission
         requestLocationPermission()
 
-        // 2. Create repository + viewmodel
-        val gpsRepository = GPSRepository(this)
-        val trackingViewModel = TrackingViewModel(gpsRepository)
+        // 5. Edge to edge
         enableEdgeToEdge()
+
+        // 6. Set content
         setContent {
             PawTrackerTheme {
-                //shows GPS screen
+                // Shows TrackingScreen with your unified ViewModel
                 TrackingScreen(viewModel = trackingViewModel)
-
-                }
             }
         }
     }
+}
 
-
-
-
-
+// 7. Preview function must be outside MainActivity
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     PawTrackerTheme {
-
+        // You can preview UI here
     }
 }
