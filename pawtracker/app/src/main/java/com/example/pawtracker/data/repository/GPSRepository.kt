@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import androidx.core.app.ActivityCompat
-import com.example.pawtracker.data.location.LocationPoint
+import com.example.pawtracker.model.LocationPoint
 import com.google.android.gms.location.*
 
 class GPSRepository(
@@ -52,9 +52,9 @@ class GPSRepository(
             override fun onLocationResult(locationResult: LocationResult) {
                 val loc: Location = locationResult.lastLocation ?: return
                 onUpdate(
-                    LocationPoint(
-                        latitude = loc.latitude,
-                        longitude = loc.longitude,
+                    com.example.pawtracker.model.LocationPoint(
+                        lat = loc.latitude,
+                        long = loc.longitude,
                         time = loc.time
                     )
                 )
@@ -82,18 +82,22 @@ class GPSRepository(
         }
 
         fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { loc ->
+            .addOnSuccessListener { loc: Location? ->
                 if (loc == null) {
                     onResult(null)
                 } else {
                     onResult(
                         LocationPoint(
-                            latitude = loc.latitude,
-                            longitude = loc.longitude,
+                            lat = loc.latitude,
+                            long = loc.longitude,
                             time = loc.time
                         )
                     )
                 }
+            }
+            .addOnFailureListener { e ->
+                // optional: handle error
+                onResult(null)
             }
     }
 }
