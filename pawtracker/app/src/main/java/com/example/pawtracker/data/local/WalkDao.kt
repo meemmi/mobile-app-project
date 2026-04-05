@@ -1,2 +1,25 @@
 package com.example.pawtracker.data.local
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface WalkDao {
+    @Insert
+    suspend fun insertWalk(walk: WalkEntity)
+
+    @Delete
+    suspend fun deleteWalk(walk: WalkEntity)
+
+    @Query("SELECT * FROM walks ORDER BY startTime DESC")
+    fun getAllWalks(): Flow<List<WalkEntity>>
+
+    @Query("SELECT * FROM walks WHERE startTime >= :startOfDay")
+    fun getWalksFromDay(startOfDay: Long): Flow<List<WalkEntity>>
+
+    @Query("SELECT * FROM walks WHERE startTime >= :startOfWeek")
+    fun getWalksFromWeek(startOfWeek: Long): Flow<List<WalkEntity>>
+}
 
