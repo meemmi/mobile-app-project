@@ -53,8 +53,8 @@ class GPSRepository(
                 val loc: Location = locationResult.lastLocation ?: return
                 onUpdate(
                     com.example.pawtracker.model.LocationPoint(
-                        lat = loc.latitude,
-                        long = loc.longitude,
+                        latitude = loc.latitude,
+                        longitude = loc.longitude,
                         time = loc.time
                     )
                 )
@@ -88,8 +88,8 @@ class GPSRepository(
                 } else {
                     onResult(
                         LocationPoint(
-                            lat = loc.latitude,
-                            long = loc.longitude,
+                            latitude = loc.latitude,
+                            longitude = loc.longitude,
                             time = loc.time
                         )
                     )

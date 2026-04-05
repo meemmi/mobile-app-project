@@ -9,13 +9,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
+import android.location.Location
+
 
 
 /**
@@ -32,6 +29,10 @@ class TrackingViewModel(
     val uiState: StateFlow<TrackingUiState> = _uiState
 
     private var useMockLocation = false // set true for testing mock data
+    private var startTime: Long = 0L
+    private var lastPoint: LocationPoint? = null
+
+
 
     /**
      * Optional mock location flow (for testing)
@@ -60,11 +61,24 @@ class TrackingViewModel(
      */
     fun startTracking() {
         _uiState.update { it.copy(tracking = true) }
+        startTime = System.currentTimeMillis()
+        lastPoint = null
 
         if (useMockLocation) {
             viewModelScope.launch {
                 mockLocationFlow().collect { point ->
                     _uiState.update { state ->
+
+                        // Calculate distance
+                        val addedDistance = if (lastPoint != null) {
+                            calculateDistance(lastPoint!!, point)
+                        } else 0.0
+
+                        lastPoint = point
+
+                        // Calculate time
+                        val elapsedMinutes =
+                            (System.currentTimeMillis() - startTime) / 60000
                         state.copy(
                             currentLocation = point,
                             points = state.points + point
@@ -76,6 +90,19 @@ class TrackingViewModel(
             gpsRepository.startLocationUpdates { point ->
                 viewModelScope.launch {
                     _uiState.update { state ->
+
+                        // Calculate distance
+                        val addedDistance = if (lastPoint != null) {
+                            calculateDistance(lastPoint!!, point)
+                        } else 0.0
+
+                        lastPoint = point
+
+                        // Calculate time
+                        val elapsedMinutes =
+                            (System.currentTimeMillis() - startTime) / 60000
+
+
                         state.copy(
                             currentLocation = point,
                             points = state.points + point
@@ -117,4 +144,11 @@ class TrackingViewModel(
     fun setUseMockLocation(enable: Boolean) {
         useMockLocation = enable
     }
+
+    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Double {
+        val result = FloatArray(1)
+        Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, result)
+        return result[0] / 1000.0 // convert meters → km
+    }
+
 }
