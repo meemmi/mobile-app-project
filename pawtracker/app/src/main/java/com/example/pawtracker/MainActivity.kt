@@ -10,13 +10,28 @@ import com.example.pawtracker.data.repository.GPSRepository
 import com.example.pawtracker.ui.theme.PawTrackerTheme
 import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
+import com.example.pawtracker.data.repository.WalkRepository
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Text
+import androidx.room.Room
+import kotlin.getValue
+import com.example.pawtracker.data.local.AppDatabase
 
 class MainActivity : ComponentActivity() {
 
     // 1. Create repository + ViewModel
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "walk_db"
+        ).build()
+    }
+
     private val gpsRepository by lazy { GPSRepository(this) }
-    private val trackingViewModel by lazy { TrackingViewModel(gpsRepository) }
+
+    private val walkRepository by lazy {WalkRepository(database.walkDao())}
+    private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
 
     // 2. Permission launcher must be inside class
     private val requestPermissionLauncher =
@@ -40,10 +55,10 @@ class MainActivity : ComponentActivity() {
 
         // 6. Set content
         setContent {
-            PawTrackerTheme {
-                // Shows TrackingScreen with your unified ViewModel
-                TrackingScreen(viewModel = trackingViewModel)
-            }
+           PawTrackerTheme {
+           // Shows TrackingScreen with your unified ViewModel
+           TrackingScreen(viewModel = trackingViewModel)
+           }
         }
     }
 }

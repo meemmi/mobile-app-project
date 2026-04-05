@@ -2,8 +2,10 @@ package com.example.pawtracker.ui.tracking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.data.repository.GPSRepository
+import com.example.pawtracker.data.repository.WalkRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,13 +27,14 @@ import kotlinx.coroutines.launch
  * - Optional mock location for testing
  */
 class TrackingViewModel(
-    private val gpsRepository: GPSRepository
+    private val gpsRepository: GPSRepository,
+    private val walkRepository: WalkRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TrackingUiState())
     val uiState: StateFlow<TrackingUiState> = _uiState
 
-    private var useMockLocation = false // set true for testing mock data
+    private var useMockLocation = true // set true for testing mock data
 
     /**
      * Optional mock location flow (for testing)
@@ -93,6 +96,18 @@ class TrackingViewModel(
         _uiState.update { it.copy(tracking = false) }
         if (!useMockLocation) {
             gpsRepository.stopLocationUpdates()
+        }
+
+        // Add route data to walk database
+        viewModelScope.launch {
+            val walk = WalkEntity(
+                startTime = System.currentTimeMillis() - 60_000,
+                endTime = System.currentTimeMillis(),
+                distance = 120f,
+                duration = 60_000,
+                path = _uiState.value.points
+            )
+            walkRepository.insertWalk(walk)
         }
     }
 
