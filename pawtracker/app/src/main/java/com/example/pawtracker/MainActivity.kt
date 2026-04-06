@@ -16,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.room.Room
 import kotlin.getValue
 import com.example.pawtracker.data.local.AppDatabase
+import com.example.pawtracker.ui.history.HistoryScreen
+import com.example.pawtracker.ui.history.HistoryViewModel
+
 
 class MainActivity : ComponentActivity() {
 
@@ -31,6 +34,9 @@ class MainActivity : ComponentActivity() {
     private val gpsRepository by lazy { GPSRepository(this) }
 
     private val walkRepository by lazy {WalkRepository(database.walkDao())}
+
+    private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
+
     private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
 
     // 2. Permission launcher must be inside class
@@ -57,7 +63,8 @@ class MainActivity : ComponentActivity() {
         setContent {
            PawTrackerTheme {
            // Shows TrackingScreen with your unified ViewModel
-           TrackingScreen(viewModel = trackingViewModel)
+           //TrackingScreen(viewModel = trackingViewModel)
+               HistoryScreen(viewModel = historyViewModel)
            }
         }
     }
