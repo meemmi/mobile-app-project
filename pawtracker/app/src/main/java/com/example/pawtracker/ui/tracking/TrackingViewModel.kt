@@ -3,15 +3,12 @@ package com.example.pawtracker.ui.tracking
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.WalkEntity
-import com.example.pawtracker.model.LocationPoint
-import com.example.pawtracker.data.repository.GPSRepository
 import com.example.pawtracker.data.repository.WalkRepository
+import com.example.pawtracker.data.repository.GPSRepository
+import com.example.pawtracker.model.LocationPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import android.location.Location
 
@@ -31,18 +28,14 @@ class TrackingViewModel(
     private val _uiState = MutableStateFlow(TrackingUiState())
     val uiState: StateFlow<TrackingUiState> = _uiState
 
-
-    private var useMockLocation = false // set true for testing mock data
+    //a reference to the coroutine that is collecting GPS updates:trackingjob
+    private var trackingJob: Job? = null
+    private var useMockLocation = false
     private var startTime: Long = 0L
     private var lastPoint: LocationPoint? = null
 
 
-    private var useMockLocation = true // set true for testing mock data
-
-
-    /**
-     * Optional mock location flow (for testing)
-     */
+    // MOCK FLOW FOR TESTING
     private fun mockLocationFlow(): Flow<LocationPoint> = flow {
         val mockRoute = listOf(
             LocationPoint(60.1699, 24.9384),
@@ -57,116 +50,99 @@ class TrackingViewModel(
             LocationPoint(60.1752, 24.9445),
         )
         for (point in mockRoute) {
-            delay(1000) // emit every second
+            delay(1000)
             emit(point)
         }
     }
 
-    /**
-     * Start tracking either real GPS or mock location
-     */
     fun startTracking() {
-        _uiState.update { it.copy(tracking = true) }
+        // Reset UI
+        _uiState.value = TrackingUiState(tracking = true)
+
         startTime = System.currentTimeMillis()
         lastPoint = null
 
-        if (useMockLocation) {
-            viewModelScope.launch {
+        trackingJob?.cancel()
+        trackingJob = viewModelScope.launch {
+
+            if (useMockLocation) {
                 mockLocationFlow().collect { point ->
-                    _uiState.update { state ->
-
-                        // Calculate distance
-                        val addedDistance = if (lastPoint != null) {
-                            calculateDistance(lastPoint!!, point)
-                        } else 0.0
-
-                        lastPoint = point
-
-                        // Calculate time
-                        val elapsedMinutes =
-                            (System.currentTimeMillis() - startTime) / 60000
-                        state.copy(
-                            currentLocation = point,
-                            points = state.points + point
-                        )
-                    }
+                    handleNewPoint(point)
                 }
-            }
-        } else {
-            gpsRepository.startLocationUpdates { point ->
-                viewModelScope.launch {
-                    _uiState.update { state ->
-
-                        // Calculate distance
-                        val addedDistance = if (lastPoint != null) {
-                            calculateDistance(lastPoint!!, point)
-                        } else 0.0
-
-                        lastPoint = point
-
-                        // Calculate time
-                        val elapsedMinutes =
-                            (System.currentTimeMillis() - startTime) / 60000
-
-
-                        state.copy(
-                            currentLocation = point,
-                            points = state.points + point
-                        )
-                    }
+            } else {
+                gpsRepository.startLocationUpdates { point ->
+                    handleNewPoint(point)
                 }
             }
         }
     }
+    private fun handleNewPoint(point: LocationPoint) {
+        val addedDistance = if (lastPoint != null) {
+            calculateDistance(lastPoint!!, point)
+        } else 0.0
 
-    /**
-     * Stop tracking
-     */
+        lastPoint = point
+        val elapsedTime = System.currentTimeMillis() - startTime
+
+        _uiState.update { state ->
+            state.copy(
+                currentLocation = point,
+                points = state.points + point,
+                distance = state.distance + addedDistance,
+                time = elapsedTime
+            )
+        }
+    }
+
+
     fun stopTracking() {
         _uiState.update { it.copy(tracking = false) }
+
+        trackingJob?.cancel()
+        trackingJob = null
+
         if (!useMockLocation) {
             gpsRepository.stopLocationUpdates()
         }
 
-        // Add route data to walk database
+        val endTime = System.currentTimeMillis()
+
+        val walk = WalkEntity(
+            startTime = startTime,
+            endTime = endTime,
+            distance = (_uiState.value.distance * 1000).toFloat(), // km → meters
+            duration = endTime - startTime,
+            path = _uiState.value.points
+        )
+
         viewModelScope.launch {
-            val walk = WalkEntity(
-                startTime = System.currentTimeMillis() - 60_000,
-                endTime = System.currentTimeMillis(),
-                distance = 120f,
-                duration = 60_000,
-                path = _uiState.value.points
-            )
             walkRepository.insertWalk(walk)
         }
+
+        // Reset UI after saving
+        _uiState.value = TrackingUiState()
     }
 
-    /**
-     * Load last known location (only real GPS)
-     */
+
     fun loadLastLocation() {
         if (!useMockLocation) {
             gpsRepository.getLastLocation { point ->
                 viewModelScope.launch {
-                    _uiState.update { state ->
-                        state.copy(currentLocation = point)
-                    }
+                    _uiState.update { it.copy(currentLocation = point) }
                 }
             }
         }
     }
 
-    /**
-     * Enable or disable mock location for testing
-     */
     fun setUseMockLocation(enable: Boolean) {
         useMockLocation = enable
     }
 
+    // DISTANCE CALCULATION
+
     private fun calculateDistance(a: LocationPoint, b: LocationPoint): Double {
         val result = FloatArray(1)
         Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, result)
-        return result[0] / 1000.0 // convert meters → km
+        return result[0] / 1000.0 // meters → km
     }
-
 }
