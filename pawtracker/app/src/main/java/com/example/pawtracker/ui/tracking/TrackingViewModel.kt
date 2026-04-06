@@ -34,9 +34,8 @@ class TrackingViewModel(
     private var startTime: Long = 0L
     private var lastPoint: LocationPoint? = null
 
-    // -----------------------------
+
     // MOCK FLOW FOR TESTING
-    // -----------------------------
     private fun mockLocationFlow(): Flow<LocationPoint> = flow {
         val mockRoute = listOf(
             LocationPoint(60.1699, 24.9384),
@@ -56,9 +55,6 @@ class TrackingViewModel(
         }
     }
 
-    // -----------------------------
-    // START TRACKING
-    // -----------------------------
     fun startTracking() {
         // Reset UI
         _uiState.value = TrackingUiState(tracking = true)
@@ -69,42 +65,36 @@ class TrackingViewModel(
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {
 
-            val flow = if (useMockLocation) {
-                mockLocationFlow()
+            if (useMockLocation) {
+                mockLocationFlow().collect { point ->
+                    handleNewPoint(point)
+                }
             } else {
-                gpsRepository.locationFlow
-            }
-
-            flow.collect { point ->
-
-                val addedDistance = if (lastPoint != null) {
-                    calculateDistance(lastPoint!!, point)
-                } else 0.0
-
-                lastPoint = point
-
-                val elapsedMinutes =
-                    (System.currentTimeMillis() - startTime) / 60000
-
-                _uiState.update { state ->
-                    state.copy(
-                        currentLocation = point,
-                        points = state.points + point,
-                        distanceKm = state.distanceKm + addedDistance,
-                        durationMinutes = elapsedMinutes
-                    )
+                gpsRepository.startLocationUpdates { point ->
+                    handleNewPoint(point)
                 }
             }
         }
+    }
+    private fun handleNewPoint(point: LocationPoint) {
+        val addedDistance = if (lastPoint != null) {
+            calculateDistance(lastPoint!!, point)
+        } else 0.0
 
-        if (!useMockLocation) {
-            gpsRepository.startLocationUpdates()
+        lastPoint = point
+        val elapsedTime = System.currentTimeMillis() - startTime
+
+        _uiState.update { state ->
+            state.copy(
+                currentLocation = point,
+                points = state.points + point,
+                distance = state.distance + addedDistance,
+                time = elapsedTime
+            )
         }
     }
 
-    // -----------------------------
-    // STOP TRACKING
-    // -----------------------------
+
     fun stopTracking() {
         _uiState.update { it.copy(tracking = false) }
 
@@ -120,7 +110,7 @@ class TrackingViewModel(
         val walk = WalkEntity(
             startTime = startTime,
             endTime = endTime,
-            distance = (_uiState.value.distanceKm * 1000).toFloat(),
+            distance = (_uiState.value.distance * 1000).toFloat(), // km → meters
             duration = endTime - startTime,
             path = _uiState.value.points
         )
@@ -133,9 +123,7 @@ class TrackingViewModel(
         _uiState.value = TrackingUiState()
     }
 
-    // -----------------------------
-    // LOAD LAST LOCATION
-    // -----------------------------
+
     fun loadLastLocation() {
         if (!useMockLocation) {
             gpsRepository.getLastLocation { point ->
