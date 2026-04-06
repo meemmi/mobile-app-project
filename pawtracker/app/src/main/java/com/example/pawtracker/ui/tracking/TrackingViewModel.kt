@@ -37,7 +37,6 @@ class TrackingViewModel(
     private var lastPoint: LocationPoint? = null
 
 
-    private var useMockLocation = true // set true for testing mock data
 
 
     /**
