@@ -21,12 +21,19 @@ class HistoryViewModel(
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState
     init {
-        loadHistory()
+        loadHistory(WalkFilter.Daily)
     }
 
-    private fun loadHistory() {
+    private fun loadHistory(filter: WalkFilter) {
         viewModelScope.launch {
-            repository.getAllWalks()
+            val flow = when (filter) {
+                WalkFilter.Daily -> repository.getTodayWalks()
+                WalkFilter.Weekly -> repository.getWalksByWeek()
+                WalkFilter.ALL -> repository.getAllWalks()
+
+            }
+
+            flow
                 .map { list -> list.map { it.toUiModel() } }
                 .collect { uiList ->
                     _uiState.value = _uiState.value.copy(walks = uiList)
@@ -34,7 +41,9 @@ class HistoryViewModel(
         }
     }
 
+
     fun setFilter(filter: WalkFilter) {
         _uiState.value = _uiState.value.copy(filter = filter)
+        loadHistory(filter)
     }
 }
