@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.room.Room
 import kotlin.getValue
 import com.example.pawtracker.data.local.AppDatabase
+import com.example.pawtracker.data.local.MIGRATION_1_2
 import com.example.pawtracker.ui.history.HistoryScreen
 import com.example.pawtracker.ui.history.HistoryViewModel
 
@@ -28,7 +29,9 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             AppDatabase::class.java,
             "walk_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     private val gpsRepository by lazy { GPSRepository(this) }
@@ -63,8 +66,8 @@ class MainActivity : ComponentActivity() {
         setContent {
            PawTrackerTheme {
            // Shows TrackingScreen with your unified ViewModel
-             TrackingScreen(viewModel = trackingViewModel)
-             // HistoryScreen(viewModel = historyViewModel)
+             //TrackingScreen(viewModel = trackingViewModel)
+              HistoryScreen(viewModel = historyViewModel)
            }
         }
     }
