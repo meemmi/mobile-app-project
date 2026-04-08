@@ -15,17 +15,18 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("walkId")]
+    indices = [
+        Index("walkId"),
+        Index(value = ["walkId", "sequence"])
+    ]
 )
 
 
 data class GpsPointEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val walkId: Long, // WalkEntity
-
-    val latitude: Double,
-    val longitude: Double,
+    val walkId: Long,
+    val sequence: Int,
     val timestamp: Long,
-
-    val orderIndex: Int // Order of the points
+    val latitude: Double,
+    val longitude: Double
 )

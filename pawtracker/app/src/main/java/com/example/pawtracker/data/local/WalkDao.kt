@@ -3,12 +3,16 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WalkDao {
     @Insert
-    suspend fun insertWalk(walk: WalkEntity)
+    suspend fun insertWalk(walk: WalkEntity): Long
+
+    @Insert
+    suspend fun insertPoints(points: List<GpsPointEntity>)
 
     @Delete
     suspend fun deleteWalk(walk: WalkEntity)
@@ -21,5 +25,9 @@ interface WalkDao {
 
     @Query("SELECT * FROM walks WHERE startTime >= :startOfWeek")
     fun getWalksFromWeek(startOfWeek: Long): Flow<List<WalkEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM walks WHERE id = :walkId")
+    suspend fun getWalkWithPoints(walkId: Long): WalkWithPoints
 }
 
