@@ -65,6 +65,10 @@ class TrackingViewModel(
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {
 
+            mockLocationFlow().collect { point ->
+                handleNewPoint(point)
+            }
+
             if (useMockLocation) {
                 mockLocationFlow().collect { point ->
                     handleNewPoint(point)
@@ -110,7 +114,7 @@ class TrackingViewModel(
         val walk = WalkEntity(
             startTime = startTime,
             endTime = endTime,
-            distance = (_uiState.value.distance * 1000).toFloat(), // km → meters
+            distance = (_uiState.value.distance * 1000).toFloat(),
             duration = endTime - startTime,
             path = _uiState.value.points
         )

@@ -13,6 +13,7 @@ data class WalkEntity(
     val endTime: Long, // Milliseconds epoch
     val distance: Float, // Meters
     val duration: Long, // Milliseconds
-    val path: List<LocationPoint> // Ordered list of GPS coordinates representing the route
+    val polyline: String? // Encoded polyline for Google Maps format
+    //val path: List<LocationPoint> // Ordered list of GPS coordinates representing the route
 )
 

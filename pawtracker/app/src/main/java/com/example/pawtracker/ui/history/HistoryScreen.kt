@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
+
 @Composable
 fun HistoryScreen(viewModel: HistoryViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
