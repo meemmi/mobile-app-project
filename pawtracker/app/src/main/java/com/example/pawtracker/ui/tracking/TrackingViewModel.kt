@@ -80,6 +80,7 @@ class TrackingViewModel(
             }
         }
     }
+
     private fun handleNewPoint(point: LocationPoint) {
         val addedDistance = if (lastPoint != null) {
             calculateDistance(lastPoint!!, point)
@@ -111,16 +112,22 @@ class TrackingViewModel(
 
         val endTime = System.currentTimeMillis()
 
+        val points = _uiState.value.points
+
         val walk = WalkEntity(
             startTime = startTime,
             endTime = endTime,
             distance = (_uiState.value.distance * 1000).toFloat(),
             duration = endTime - startTime,
-            path = _uiState.value.points
+            pointCount = points.size,
+            previewPolyline = null
         )
 
         viewModelScope.launch {
-            walkRepository.insertWalk(walk)
+            walkRepository.insertWalkWithPoints(
+                walk = walk,
+                points = points
+            )
         }
 
         // Reset UI after saving
