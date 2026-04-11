@@ -3,23 +3,23 @@ package com.example.pawtracker.ui.history
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.repository.WalkRepository
-import com.example.pawtracker.ui.history.HistoryUiState
-import com.example.pawtracker.ui.history.WalkFilter
 import com.example.pawtracker.data.mapper.toUiModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class HistoryViewModel(
     private val repository: WalkRepository
 ) : ViewModel() {
 
-
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState
+
+    // Cache all walks from DB so filtering is instant
+    private var allWalks: List<WalkUiModel> = emptyList()
+
     init {
         loadHistory()
     }
@@ -29,12 +29,49 @@ class HistoryViewModel(
             repository.getAllWalks()
                 .map { list -> list.map { it.toUiModel() } }
                 .collect { uiList ->
-                    _uiState.value = _uiState.value.copy(walks = uiList)
+                    allWalks = uiList
+                    applyFilter(_uiState.value.filter)
                 }
         }
     }
 
     fun setFilter(filter: WalkFilter) {
         _uiState.value = _uiState.value.copy(filter = filter)
+        applyFilter(filter)
+    }
+
+    private fun applyFilter(filter: WalkFilter) {
+        val filtered = when (filter) {
+            WalkFilter.Daily -> filterDaily(allWalks)
+            WalkFilter.Weekly -> filterWeekly(allWalks)
+        }
+
+        _uiState.value = _uiState.value.copy(walks = filtered)
+    }
+
+
+    private fun filterDaily(list: List<WalkUiModel>): List<WalkUiModel> {
+        val cal = Calendar.getInstance()
+        val todayYear = cal.get(Calendar.YEAR)
+        val todayDay = cal.get(Calendar.DAY_OF_YEAR)
+
+        return list.filter { walk ->
+            cal.timeInMillis = walk.startTime
+            cal.get(Calendar.YEAR) == todayYear &&
+                    cal.get(Calendar.DAY_OF_YEAR) == todayDay
+        }
+    }
+
+
+    private fun filterWeekly(list: List<WalkUiModel>): List<WalkUiModel> {
+        val cal = Calendar.getInstance()
+        val todayWeek = cal.get(Calendar.WEEK_OF_YEAR)
+        val todayYear = cal.get(Calendar.YEAR)
+
+        return list.filter { walk ->
+            cal.timeInMillis = walk.startTime
+            cal.get(Calendar.WEEK_OF_YEAR) == todayWeek &&
+                    cal.get(Calendar.YEAR) == todayYear
+        }
     }
 }
