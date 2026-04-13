@@ -57,6 +57,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(platform("androidx.compose:compose-bom:2024.10.00"))
+
     ksp(libs.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
