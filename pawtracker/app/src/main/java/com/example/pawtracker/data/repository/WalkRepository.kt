@@ -21,6 +21,21 @@ class WalkRepository(private val dao: WalkDao) {
         return dao.getWalkWithPoints(walkId)
     }
 
+    // Statistics
+
+    fun getTodayDistance() =
+        dao.getTotalDistanceSince(TimeUtils.getStartOfDay())
+
+    fun getTodayDuration() =
+        dao.getTotalDurationSince(TimeUtils.getStartOfDay())
+
+    fun getWeekDistance() =
+        dao.getTotalDistanceSince(TimeUtils.getStartOfWeek())
+
+    fun getWeekDuration() =
+        dao.getTotalDurationSince(TimeUtils.getStartOfWeek())
+
+
     suspend fun insertWalkWithPoints(
         walk: WalkEntity,
         points: List<LocationPoint>
