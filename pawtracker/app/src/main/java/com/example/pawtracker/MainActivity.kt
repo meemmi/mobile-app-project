@@ -7,20 +7,25 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.pawtracker.data.repository.GPSRepository
+import com.example.pawtracker.data.repository.DogProfileRepository
 import com.example.pawtracker.ui.theme.PawTrackerTheme
 import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.data.repository.WalkRepository
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Text
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import kotlin.getValue
 import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.local.MIGRATION_1_2
 import com.example.pawtracker.ui.history.HistoryScreen
 import com.example.pawtracker.ui.history.HistoryViewModel
+import com.example.pawtracker.ui.profile.ProfileScreen
 import com.example.pawtracker.ui.statistics.StatisticsScreen
 import com.example.pawtracker.ui.statistics.StatisticsViewModel
+import com.example.pawtracker.ui.profile.ProfileViewModel
+
 
 
 class MainActivity : ComponentActivity() {
@@ -40,9 +45,13 @@ class MainActivity : ComponentActivity() {
 
     private val walkRepository by lazy {WalkRepository(database.walkDao())}
 
+    private val dogProfileRepository by lazy { DogProfileRepository(database.dogProfileDao())}
+
     private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
 
     private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
+
+    private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
 
     private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository) }
 
@@ -72,7 +81,8 @@ class MainActivity : ComponentActivity() {
            // Shows TrackingScreen with your unified ViewModel
              //TrackingScreen(viewModel = trackingViewModel)
              // HistoryScreen(viewModel = historyViewModel)
-               StatisticsScreen(viewModel = statisticsViewModel)
+              // StatisticsScreen(viewModel = statisticsViewModel)
+               ProfileScreen(viewModel = profileViewModel)
            }
         }
     }
