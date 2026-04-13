@@ -65,9 +65,6 @@ class TrackingViewModel(
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {
 
-            mockLocationFlow().collect { point ->
-                handleNewPoint(point)
-            }
 
             if (useMockLocation) {
                 mockLocationFlow().collect { point ->
