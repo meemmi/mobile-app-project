@@ -19,6 +19,8 @@ import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.local.MIGRATION_1_2
 import com.example.pawtracker.ui.history.HistoryScreen
 import com.example.pawtracker.ui.history.HistoryViewModel
+import com.example.pawtracker.ui.statistics.StatisticsScreen
+import com.example.pawtracker.ui.statistics.StatisticsViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -41,6 +43,8 @@ class MainActivity : ComponentActivity() {
     private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
 
     private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
+
+    private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository) }
 
     // 2. Permission launcher must be inside class
     private val requestPermissionLauncher =
@@ -67,7 +71,8 @@ class MainActivity : ComponentActivity() {
            PawTrackerTheme {
            // Shows TrackingScreen with your unified ViewModel
              //TrackingScreen(viewModel = trackingViewModel)
-              HistoryScreen(viewModel = historyViewModel)
+             // HistoryScreen(viewModel = historyViewModel)
+               StatisticsScreen(viewModel = statisticsViewModel)
            }
         }
     }

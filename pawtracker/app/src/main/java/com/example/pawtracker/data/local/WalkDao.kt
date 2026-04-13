@@ -17,6 +17,7 @@ interface WalkDao {
     @Delete
     suspend fun deleteWalk(walk: WalkEntity)
 
+    //History
     @Query("SELECT * FROM walks ORDER BY startTime DESC")
     fun getAllWalks(): Flow<List<WalkEntity>>
 
@@ -29,5 +30,12 @@ interface WalkDao {
     @Transaction
     @Query("SELECT * FROM walks WHERE id = :walkId")
     suspend fun getWalkWithPoints(walkId: Long): WalkWithPoints
+
+    //Statistics
+    @Query("""SELECT SUM(distance) FROM walks WHERE startTime >= :startOfDay""")
+    fun getTotalDistanceSince(startOfDay: Long): Flow<Float?>
+
+    @Query("""SELECT SUM(duration) FROM walks WHERE startTime >= :startOfWeek""")
+    fun getTotalDurationSince(startOfWeek: Long): Flow<Long?>
 }
 
