@@ -7,5 +7,8 @@ data class StatisticsUiState(
     val weekDistance: Float = 0f,
     val weekDuration: Long = 0L,
     val goalDistance: Double = 0.0,
-    val goalDuration: Long = 0L
+    val goalDuration: Long = 0L,
+    val dogName: String = "",
+    val imageUri: String = ""
+
 )

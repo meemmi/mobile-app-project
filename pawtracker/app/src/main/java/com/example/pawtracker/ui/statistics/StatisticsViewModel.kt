@@ -3,6 +3,9 @@ package com.example.pawtracker.ui.statistics
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pawtracker.data.local.DogProfileDao
+import com.example.pawtracker.data.local.DogProfileEntity
+import com.example.pawtracker.data.repository.DogProfileRepository
 import com.example.pawtracker.data.repository.WalkRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,59 +15,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StatisticsViewModel(
-    private val repository: WalkRepository,
-   // private val profileDao: DogProfileDao
+    private val walkRepository: WalkRepository,
+    private val profileRepository: DogProfileRepository
 ) : ViewModel() {
 
-    // For testing
-    init {
-        viewModelScope.launch {
-            repository.getTodayDistance().collect {
-                Log.d("statistics", "Today distance = $it")
-            }
-        }
+    // Fetch walk statistics as individual flows
+    private val todayDistance = walkRepository.getTodayDistance().map { it ?: 0f }
+    private val todayDuration = walkRepository.getTodayDuration().map { it ?: 0L }
+    private val weekDistance = walkRepository.getWeekDistance().map { it ?: 0f }
+    private val weekDuration = walkRepository.getWeekDuration().map { it ?: 0L }
 
-        viewModelScope.launch {
-            repository.getTodayDuration().collect {
-                Log.d("statistics", "Today duration = $it")
-            }
-        }
-
-        viewModelScope.launch {
-            repository.getWeekDistance().collect {
-                Log.d("statistics", "Week distance = $it")
-            }
-        }
-
-        viewModelScope.launch {
-            repository.getWeekDuration().collect {
-                Log.d("statistics", "Week duration = $it")
-            }
-        }
+    // Fetch profile to show picture, name, goals
+    private val getProfile = profileRepository.getProfile().map { profile ->
+        profile ?: DogProfileEntity()
     }
-
-    private val todayDistance =
-        repository.getTodayDistance().map { it ?: 0f }
-
-    private val todayDuration =
-        repository.getTodayDuration().map { it ?: 0L }
-
-    private val weekDistance =
-        repository.getWeekDistance().map { it ?: 0f }
-
-    private val weekDuration =
-        repository.getWeekDuration().map { it ?: 0L }
-
-    /*
-    private val goals =
-        profileDao.getProfile()
-            .map {
-                it?.let { p ->
-                    p.dailyDistanceGoalKm to p.dailyDurationGoalMs
-                } ?: (0.0 to 0L)
-            }
-
-*/
 
     val uiState: StateFlow<StatisticsUiState> =
         combine(
@@ -72,16 +36,16 @@ class StatisticsViewModel(
             todayDuration,
             weekDistance,
             weekDuration,
-          //  goals
-        ) { todayDist, todayDur, weekDist, weekDur, -> //(goalDist, goalDur)
+            getProfile
+        ) { todayDist, todayDur, weekDist, weekDur, profile ->
 
             StatisticsUiState(
                 todayDistance = todayDist,
                 todayDuration = todayDur,
                 weekDistance = weekDist,
                 weekDuration = weekDur,
-                goalDistance = 0.0, //goalDist,
-                goalDuration = 0L //goalDur
+                goalDistance = profile.dailyDistanceGoal,
+                goalDuration = profile.dailyDurationGoal
             )
         }.stateIn(
             viewModelScope,
