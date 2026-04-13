@@ -6,13 +6,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "dog_profile")
 data class DogProfileEntity(
     @PrimaryKey val id: Int = 0,
-    val imageUri: String,
-    val name: String,
-    val breed: String,
+    val imageUri: String = "",
+    val name: String = "",
+    val breed: String = "",
 
-    val dailyDistanceGoal: Double,
-    val dailyDurationGoal: Long,
+    val dailyDistanceGoal: Double = 0.0,
+    val dailyDurationGoal: Long = 0L,
 
-    val weeklyDistanceGoal: Double,
-    val weeklyDurationGoal: Long
+    val weeklyDistanceGoal: Double = 0.0,
+    val weeklyDurationGoal: Long = 0L
 )
