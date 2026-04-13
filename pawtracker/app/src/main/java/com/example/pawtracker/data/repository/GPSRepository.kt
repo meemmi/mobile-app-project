@@ -1,5 +1,6 @@
 package com.example.pawtracker.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -35,13 +36,14 @@ class GPSRepository(
     fun setupLocationRequest() {
         locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            60_000L // 60 seconds
+            2000L
         )
-            .setMinUpdateIntervalMillis(30_000L)
-            .setMaxUpdateDelayMillis(120_000L)
+            .setMinUpdateIntervalMillis(1000L)
+            .setMaxUpdateDelayMillis(3000L)
             .build()
     }
 
+    @SuppressLint("MissingPermission")
     fun startLocationUpdates(onUpdate: (LocationPoint) -> Unit) {
 
         if (!hasLocationPermission()) return
@@ -52,7 +54,7 @@ class GPSRepository(
             override fun onLocationResult(locationResult: LocationResult) {
                 val loc: Location = locationResult.lastLocation ?: return
                 onUpdate(
-                    com.example.pawtracker.model.LocationPoint(
+                    LocationPoint(
                         latitude = loc.latitude,
                         longitude = loc.longitude,
                         time = loc.time
@@ -81,23 +83,28 @@ class GPSRepository(
             return
         }
 
-        fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { loc: Location? ->
-                if (loc == null) {
-                    onResult(null)
-                } else {
-                    onResult(
-                        LocationPoint(
-                            latitude = loc.latitude,
-                            longitude = loc.longitude,
-                            time = loc.time
+        try {
+            fusedLocationProviderClient.lastLocation
+                .addOnSuccessListener { loc: Location? ->
+                    if (loc == null) {
+                        onResult(null)
+                    } else {
+                        onResult(
+                            LocationPoint(
+                                latitude = loc.latitude,
+                                longitude = loc.longitude,
+                                time = loc.time
+                            )
                         )
-                    )
+                    }
                 }
-            }
-            .addOnFailureListener { e ->
-                // optional: handle error
-                onResult(null)
-            }
+                .addOnFailureListener {
+                    onResult(null)
+                }
+
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            onResult(null)
+        }
     }
 }

@@ -76,6 +76,7 @@ class TrackingViewModel(
                 }
             }
         }
+
     }
 
     private fun handleNewPoint(point: LocationPoint) {

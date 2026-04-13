@@ -7,17 +7,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.pawtracker.R
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.*
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.RoundCap
 
-/**
- * Main TrackingScreen composable
- */
+// --- Compose Maps imports (ONLY these!) ---
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
+/*import com.google.maps.android.compose.CameraUpdateFactory
+import com.google.maps.android.compose.LatLng
+import com.google.maps.android.compose.JointType
+import com.google.maps.android.compose.RoundCap*/
+// ------------------------------------------
+
 @Composable
 fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
@@ -29,9 +39,6 @@ fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
     )
 }
 
-/**
- * Layout: Map + stats + control buttons
- */
 @Composable
 fun TrackingLayout(
     uiState: TrackingUiState,
@@ -70,26 +77,20 @@ fun TrackingLayout(
     }
 }
 
-/**
- * Google Map showing tracking points
- */
 @Composable
 fun TrackingMap(
     uiState: TrackingUiState,
     modifier: Modifier = Modifier
 ) {
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(
-            com.google.android.gms.maps.model.LatLng(60.1699, 24.9384),
-            15f
-        )
-    }
+    val cameraPositionState = rememberCameraPositionState()
 
+    // Move camera when location updates
     LaunchedEffect(uiState.currentLocation) {
         uiState.currentLocation?.let { point ->
             cameraPositionState.animate(
-                CameraUpdateFactory.newLatLng(
-                    com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude)
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(point.latitude, point.longitude),
+                    17f
                 )
             )
         }
@@ -98,30 +99,47 @@ fun TrackingMap(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(isMyLocationEnabled = uiState.locationPermission),
+        properties = MapProperties(
+            isMyLocationEnabled = uiState.locationPermission
+        ),
         uiSettings = MapUiSettings(
             zoomControlsEnabled = false,
             myLocationButtonEnabled = true
         )
     ) {
-        Polyline(
-            points = uiState.points.map { com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }
-        )
 
+        // Draw polyline
+        if (uiState.points.size > 1) {
+
+            val filteredPoints = uiState.points.distinctBy {
+                Pair(it.latitude, it.longitude)
+            }
+
+            Polyline(
+                points = filteredPoints.map {
+                    LatLng(it.latitude, it.longitude)
+                },
+                color = Color(0xFF1976D2),
+                width = 12f,
+                geodesic = true,
+                jointType = JointType.ROUND,
+                startCap = RoundCap(),
+                endCap = RoundCap()
+            )
+        }
+
+        // Current location marker
         uiState.currentLocation?.let { point ->
             Marker(
                 state = MarkerState(
-                    position = com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude)
+                    position = LatLng(point.latitude, point.longitude)
                 ),
-                title = "Current"
+                title = "Dog 🐕"
             )
         }
     }
 }
 
-/**
- * Show statistics below the map
- */
 @Composable
 fun TrackingStatistics(
     uiState: TrackingUiState,
@@ -136,54 +154,54 @@ fun TrackingStatistics(
     else
         "%d min".format(minutes)
 
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(stringResource(R.string.tracking_distance))
+    Column(modifier = modifier.fillMaxWidth()) {
+
+        Text("Distance")
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("%.2f km".format(uiState.distance), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                "%.2f km".format(uiState.distance),
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(stringResource(R.string.tracking_time))
+        Text("Time")
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(formattedTime, style = MaterialTheme.typography.headlineMedium)
+            Text(
+                formattedTime,
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
     }
 }
 
-/**
- * Start/Stop buttons
- */
 @Composable
 fun ControlButtons(
     tracking: Boolean,
     onStart: () -> Unit,
-    onStop: () -> Unit,
-    modifier: Modifier = Modifier
+    onStop: () -> Unit
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Button(
             onClick = onStart,
             enabled = !tracking,
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            modifier = Modifier.weight(1f)
         ) {
-            Text(stringResource(R.string.tracking_start))
+            Text("Start")
         }
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -191,10 +209,9 @@ fun ControlButtons(
         Button(
             onClick = onStop,
             enabled = tracking,
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            modifier = Modifier.weight(1f)
         ) {
-            Text(stringResource(R.string.tracking_stop))
+            Text("Stop")
         }
     }
 }
