@@ -127,6 +127,15 @@ fun TrackingStatistics(
     uiState: TrackingUiState,
     modifier: Modifier = Modifier
 ) {
+    val totalMinutes = uiState.time / 60000
+    val hours = totalMinutes / 60
+    val minutes = totalMinutes % 60
+
+    val formattedTime = if (hours > 0)
+        "%d h %02d min".format(hours, minutes)
+    else
+        "%d min".format(minutes)
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -137,7 +146,7 @@ fun TrackingStatistics(
                 .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("${uiState.distance} km", style = MaterialTheme.typography.headlineMedium)
+            Text("%.2f km".format(uiState.distance), style = MaterialTheme.typography.headlineMedium)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -149,7 +158,7 @@ fun TrackingStatistics(
                 .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("${uiState.time} min", style = MaterialTheme.typography.headlineMedium)
+            Text(formattedTime, style = MaterialTheme.typography.headlineMedium)
         }
     }
 }
