@@ -66,8 +66,8 @@ class MainActivity : ComponentActivity() {
         setContent {
            PawTrackerTheme {
            // Shows TrackingScreen with your unified ViewModel
-             //TrackingScreen(viewModel = trackingViewModel)
-              HistoryScreen(viewModel = historyViewModel)
+             TrackingScreen(viewModel = trackingViewModel)
+              //HistoryScreen(viewModel = historyViewModel)
            }
         }
     }
