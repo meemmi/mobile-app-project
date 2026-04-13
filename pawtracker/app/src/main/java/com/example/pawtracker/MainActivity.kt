@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
 
     private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
 
-    private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository) }
+    private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
 
     // 2. Permission launcher must be inside class
     private val requestPermissionLauncher =
@@ -81,8 +81,8 @@ class MainActivity : ComponentActivity() {
            // Shows TrackingScreen with your unified ViewModel
              //TrackingScreen(viewModel = trackingViewModel)
              // HistoryScreen(viewModel = historyViewModel)
-              // StatisticsScreen(viewModel = statisticsViewModel)
-               ProfileScreen(viewModel = profileViewModel)
+              StatisticsScreen(viewModel = statisticsViewModel)
+               //ProfileScreen(viewModel = profileViewModel)
            }
         }
     }
