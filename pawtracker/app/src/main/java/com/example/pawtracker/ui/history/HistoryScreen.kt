@@ -77,13 +77,21 @@ fun HistoryList(walks: List<WalkUiModel>) {
 
 @Composable
 fun WalkHistoryItem(walk: WalkUiModel) {
+    val hours = walk.timeMinutes / 60
+    val minutes = walk.timeMinutes % 60
+
+    val timeFormatted = if (hours > 0)
+        "%d h %02d min".format(hours, minutes)
+    else
+        "%d min".format(minutes)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
         Text(walk.date, style = MaterialTheme.typography.titleMedium)
-        Text("${walk.distanceKm} km — ${walk.timeMinutes} min")
+        Text("%.2f km — %s".format(walk.distanceKm, timeFormatted))
         Divider(modifier = Modifier.padding(top = 8.dp))
     }
 }
