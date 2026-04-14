@@ -78,21 +78,41 @@ class TrackingViewModel(
         }
 
     }
+    /*private fun handleNewPoint(point: LocationPoint) {
+        val addedDistance = if (lastPoint != null) {
+            calculateDistance(lastPoint!!, point)
+        } else 0.0
+
+        lastPoint = point
+        val elapsedTime = System.currentTimeMillis() - startTime
+
+        _uiState.update { state ->
+            state.copy(
+                currentLocation = point,
+                points = state.points + point,
+                distance = state.distance + addedDistance,
+                time = elapsedTime
+            )
+        }
+    }*/
 
     private fun handleNewPoint(point: LocationPoint) {
+
         if (lastPoint != null) {
 
-            val distance = calculateDistance(lastPoint!!, point)
+            val distanceKm = calculateDistance(lastPoint!!, point)
+            val timeDiffMs = point.time - lastPoint!!.time
 
-            //  Ignore GPS jumps (> 100 meters in 1 second)
-            if (distance > 0.1) return   // 0.1 km = 100 meters
+            val timeDiffSec = if (timeDiffMs <= 0) 1.0 else timeDiffMs / 1000.0
 
-            // Ignore very tiny noise (< 3 meters)
-            if (distance < 0.003) return
+            val speed = distanceKm / (timeDiffSec / 3600.0) // km/h
+            // dog cannot go > 20 km/h
+            // Ignore impossible speeds
+            if (speed > 25) return
+
+            // Ignore tiny GPS noise (< 1 meter)
+            if (distanceKm < 0.001) return
         }
-
-
-
 
         val addedDistance = if (lastPoint != null) {
             calculateDistance(lastPoint!!, point)
