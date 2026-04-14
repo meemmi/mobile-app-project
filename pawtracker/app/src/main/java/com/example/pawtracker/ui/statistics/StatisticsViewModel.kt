@@ -20,10 +20,11 @@ class StatisticsViewModel(
 ) : ViewModel() {
 
     // Fetch walk statistics as individual flows
-    private val todayDistance = walkRepository.getTodayDistance().map { it ?: 0f }
-    private val todayDuration = walkRepository.getTodayDuration().map { it ?: 0L }
-    private val weekDistance = walkRepository.getWeekDistance().map { it ?: 0f }
-    private val weekDuration = walkRepository.getWeekDuration().map { it ?: 0L }
+    private val todayDistance = walkRepository.getTodayDistance()
+    private val todayDuration = walkRepository.getTodayDuration()
+    private val weekDistance = walkRepository.getWeekDistance()
+    private val weekDuration = walkRepository.getWeekDuration()
+
 
     // Fetch profile to show picture, name, goals
     private val getProfile = profileRepository.getProfile().map { profile ->

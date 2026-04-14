@@ -6,6 +6,7 @@ import com.example.pawtracker.data.local.WalkWithPoints
 import com.example.pawtracker.data.local.GpsPointEntity
 import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.utils.TimeUtils
+import kotlinx.coroutines.flow.map
 
 class WalkRepository(private val dao: WalkDao) {
 
@@ -24,16 +25,20 @@ class WalkRepository(private val dao: WalkDao) {
     // Statistics
 
     fun getTodayDistance() =
-        dao.getTotalDistanceSince(TimeUtils.getStartOfDay())
+        dao.getDailyDistance(TimeUtils.getStartOfDay())
+            .map { (it ?: 0f) / 1000f } // meters → km
 
     fun getTodayDuration() =
-        dao.getTotalDurationSince(TimeUtils.getStartOfDay())
+        dao.getDailyDuration(TimeUtils.getStartOfDay())
+            .map { it ?: 0L } // ms
 
     fun getWeekDistance() =
-        dao.getTotalDistanceSince(TimeUtils.getStartOfWeek())
+        dao.getWeeklyDistance(TimeUtils.getStartOfWeek())
+            .map { (it ?: 0f) / 1000f } // meters → km
 
     fun getWeekDuration() =
-        dao.getTotalDurationSince(TimeUtils.getStartOfWeek())
+        dao.getWeeklyDuration(TimeUtils.getStartOfWeek())
+            .map { it ?: 0L } // ms
 
 
     suspend fun insertWalkWithPoints(

@@ -32,10 +32,19 @@ interface WalkDao {
     suspend fun getWalkWithPoints(walkId: Long): WalkWithPoints
 
     //Statistics
-    @Query("""SELECT SUM(distance) FROM walks WHERE startTime >= :startOfDay""")
-    fun getTotalDistanceSince(startOfDay: Long): Flow<Float?>
+    // DAILY
+    @Query("SELECT SUM(distance) FROM walks WHERE startTime >= :startOfDay")
+    fun getDailyDistance(startOfDay: Long): Flow<Float?>
 
-    @Query("""SELECT SUM(duration) FROM walks WHERE startTime >= :startOfWeek""")
-    fun getTotalDurationSince(startOfWeek: Long): Flow<Long?>
+    @Query("SELECT SUM(duration) FROM walks WHERE startTime >= :startOfDay")
+    fun getDailyDuration(startOfDay: Long): Flow<Long?>
+
+    // WEEKLY
+    @Query("SELECT SUM(distance) FROM walks WHERE startTime >= :startOfWeek")
+    fun getWeeklyDistance(startOfWeek: Long): Flow<Float?>
+
+    @Query("SELECT SUM(duration) FROM walks WHERE startTime >= :startOfWeek")
+    fun getWeeklyDuration(startOfWeek: Long): Flow<Long?>
+
 }
 
