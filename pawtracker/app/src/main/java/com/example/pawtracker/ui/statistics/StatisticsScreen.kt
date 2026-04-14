@@ -5,19 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
+// ---------------------- SCREEN ----------------------
 
 @Composable
 fun StatisticsScreen(viewModel: StatisticsViewModel) {
+
     val state by viewModel.uiState.collectAsState()
 
     Column(
@@ -27,7 +29,7 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Dog picture
+        // Dog picture (placeholder)
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -48,9 +50,9 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
             color = Color.Gray
         )
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // Distance + Duration cards
+        // Distance + Duration
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -65,32 +67,85 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
             )
         }
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Start Walk button
         Button(
-            onClick = { /* navigate to tracking */ },
+            onClick = { /* TODO: navigate to tracking */ },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Start Walk")
         }
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        // Pie chart
-        PieChart(
+        // ✅ CHART
+        TodayProgressChart(
             today = state.todayDistance,
             goal = state.goalDistance.toFloat()
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "%.2f / %.2f km".format(state.todayDistance, state.goalDistance),
+            text = "%.2f / %.2f km".format(
+                state.todayDistance,
+                state.goalDistance
+            ),
             style = MaterialTheme.typography.bodyLarge
         )
     }
 }
+
+// ---------------------- CHART ----------------------
+
+@Composable
+fun TodayProgressChart(today: Float, goal: Float) {
+
+    val progress = if (goal == 0f) 0f else (today / goal).coerceIn(0f, 1f)
+    val sweepAngle = progress * 360f
+
+    // ✅ FIX: get color OUTSIDE Canvas
+    val primaryColor = MaterialTheme.colorScheme.primary
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(200.dp)
+    ) {
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+
+            // Background circle
+            drawArc(
+                color = Color.LightGray,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(width = 30f)
+            )
+
+            // Progress arc
+            drawArc(
+                color = primaryColor,
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                style = Stroke(
+                    width = 30f,
+                    cap = StrokeCap.Round
+                )
+            )
+        }
+
+        // Center percentage text
+        Text(
+            text = "${(progress * 100).toInt()}%",
+            style = MaterialTheme.typography.headlineMedium
+        )
+    }
+}
+
+// ---------------------- STAT CARD ----------------------
 
 @Composable
 fun StatCard(value: String, label: String) {
@@ -107,25 +162,7 @@ fun StatCard(value: String, label: String) {
     }
 }
 
-@Composable
-fun PieChart(today: Float, goal: Float) {
-    val progress = if (goal == 0f) 0f else (today / goal).coerceIn(0f, 1f)
-
-    Box(
-        modifier = Modifier
-            .size(180.dp)
-            .clip(CircleShape)
-            .background(Color.LightGray),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize(progress)
-                .background(MaterialTheme.colorScheme.primary)
-        )
-    }
-}
-
+// ---------------------- FORMAT TIME ----------------------
 
 fun formatDuration(ms: Long): String {
     val totalMinutes = ms / 60000
@@ -137,5 +174,3 @@ fun formatDuration(ms: Long): String {
     else
         "%d min".format(minutes)
 }
-
-
