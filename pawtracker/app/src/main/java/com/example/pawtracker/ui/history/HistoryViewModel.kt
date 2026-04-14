@@ -29,15 +29,33 @@ class HistoryViewModel(
             repository.getAllWalks()
                 .map { list -> list.map { it.toUiModel() } }
                 .collect { uiList ->
+
                     allWalks = uiList
-                    applyFilter(_uiState.value.filter)
+
+                    val currentFilter = _uiState.value.filter
+
+                    val filtered = when (currentFilter) {
+                        WalkFilter.Daily -> filterDaily(allWalks)
+                        WalkFilter.Weekly -> filterWeekly(allWalks)
+                    }
+
+                    _uiState.value = _uiState.value.copy(
+                        walks = filtered
+                    )
                 }
         }
     }
 
     fun setFilter(filter: WalkFilter) {
-        _uiState.value = _uiState.value.copy(filter = filter)
-        applyFilter(filter)
+        val filtered = when (filter) {
+            WalkFilter.Daily -> filterDaily(allWalks)
+            WalkFilter.Weekly -> filterWeekly(allWalks)
+        }
+
+        _uiState.value = _uiState.value.copy(
+            filter = filter,
+            walks = filtered
+        )
     }
 
     private fun applyFilter(filter: WalkFilter) {
@@ -64,14 +82,11 @@ class HistoryViewModel(
 
 
     private fun filterWeekly(list: List<WalkUiModel>): List<WalkUiModel> {
-        val cal = Calendar.getInstance()
-        val todayWeek = cal.get(Calendar.WEEK_OF_YEAR)
-        val todayYear = cal.get(Calendar.YEAR)
+        val now = System.currentTimeMillis()
+        val oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000L)
 
         return list.filter { walk ->
-            cal.timeInMillis = walk.startTime
-            cal.get(Calendar.WEEK_OF_YEAR) == todayWeek &&
-                    cal.get(Calendar.YEAR) == todayYear
+            walk.startTime in oneWeekAgo..now
         }
     }
 }

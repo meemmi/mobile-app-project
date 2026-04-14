@@ -36,10 +36,11 @@ class GPSRepository(
     fun setupLocationRequest() {
         locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            2000L
+            1000L
         )
             .setMinUpdateIntervalMillis(1000L)
-            .setMaxUpdateDelayMillis(3000L)
+            .setWaitForAccurateLocation(true)
+            // .setMaxUpdateDelayMillis(3000L)
             .build()
     }
 

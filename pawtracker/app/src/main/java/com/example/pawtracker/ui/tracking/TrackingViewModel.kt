@@ -80,6 +80,20 @@ class TrackingViewModel(
     }
 
     private fun handleNewPoint(point: LocationPoint) {
+        if (lastPoint != null) {
+
+            val distance = calculateDistance(lastPoint!!, point)
+
+            //  Ignore GPS jumps (> 100 meters in 1 second)
+            if (distance > 0.1) return   // 0.1 km = 100 meters
+
+            // Ignore very tiny noise (< 3 meters)
+            if (distance < 0.003) return
+        }
+
+
+
+
         val addedDistance = if (lastPoint != null) {
             calculateDistance(lastPoint!!, point)
         } else 0.0
