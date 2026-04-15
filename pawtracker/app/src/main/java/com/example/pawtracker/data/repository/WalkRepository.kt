@@ -1,65 +1,23 @@
 package com.example.pawtracker.data.repository
 
-import com.example.pawtracker.data.local.WalkDao
 import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.data.local.WalkWithPoints
-import com.example.pawtracker.data.local.GpsPointEntity
 import com.example.pawtracker.model.LocationPoint
-import com.example.pawtracker.utils.TimeUtils
+import kotlinx.coroutines.flow.Flow
 
-class WalkRepository(private val dao: WalkDao) {
+interface WalkRepository {
+    fun getAllWalks(): Flow<List<WalkEntity>>
+    fun getTodayWalks(): Flow<List<WalkEntity>>
+    fun getWalksByWeek(): Flow<List<WalkEntity>>
 
-    fun getAllWalks() = dao.getAllWalks()
-
-    fun getTodayWalks() =
-        dao.getWalksFromDay(TimeUtils.getStartOfDay())
-
-    fun getWalksByWeek() =
-        dao.getWalksFromWeek(TimeUtils.getStartOfWeek())
-
-    suspend fun getWalkDetails(walkId: Long): WalkWithPoints {
-        return dao.getWalkWithPoints(walkId)
-    }
+    suspend fun getWalkDetails(walkId: Long): WalkWithPoints
 
     // Statistics
+    fun getTodayDistance(): Flow<Float?>
+    fun getTodayDuration(): Flow<Long?>
+    fun getWeekDistance(): Flow<Float?>
+    fun getWeekDuration(): Flow<Long?>
 
-    fun getTodayDistance() =
-        dao.getTotalDistanceSince(TimeUtils.getStartOfDay())
-
-    fun getTodayDuration() =
-        dao.getTotalDurationSince(TimeUtils.getStartOfDay())
-
-    fun getWeekDistance() =
-        dao.getTotalDistanceSince(TimeUtils.getStartOfWeek())
-
-    fun getWeekDuration() =
-        dao.getTotalDurationSince(TimeUtils.getStartOfWeek())
-
-
-    suspend fun insertWalkWithPoints(
-        walk: WalkEntity,
-        points: List<LocationPoint>
-    ) {
-        // 1. Insert parent row
-        val walkId = dao.insertWalk(walk)
-
-        // 2. Convert to DB entities
-        val pointEntities = points.mapIndexed { index, point ->
-            GpsPointEntity(
-                walkId = walkId,
-                sequence = index,
-                timestamp = point.time,
-                latitude = point.latitude,
-                longitude = point.longitude
-            )
-        }
-
-        // 3. Insert all points
-        dao.insertPoints(pointEntities)
+    suspend fun insertWalkWithPoints(walk: WalkEntity, points: List<LocationPoint>)
+    suspend fun deleteWalk(walk: WalkEntity)
     }
-
-
-    suspend fun deleteWalk(walk: WalkEntity) {
-        dao.deleteWalk(walk)
-    }
-}

@@ -19,6 +19,7 @@ import androidx.room.Room
 import kotlin.getValue
 import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.local.MIGRATION_1_2
+import com.example.pawtracker.data.repository.WalkRepositoryImpl
 import com.example.pawtracker.ui.history.HistoryScreen
 import com.example.pawtracker.ui.history.HistoryViewModel
 import com.example.pawtracker.ui.profile.ProfileScreen
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
     private val gpsRepository by lazy { GPSRepository(this) }
 
-    private val walkRepository by lazy {WalkRepository(database.walkDao())}
+    private val walkRepository: WalkRepository by lazy { WalkRepositoryImpl(database.walkDao()) }
 
     private val dogProfileRepository by lazy { DogProfileRepository(database.dogProfileDao())}
 
@@ -80,9 +81,9 @@ class MainActivity : ComponentActivity() {
            PawTrackerTheme {
            // Shows TrackingScreen with your unified ViewModel
 
-             //TrackingScreen(viewModel = trackingViewModel)
+             TrackingScreen(viewModel = trackingViewModel)
              // HistoryScreen(viewModel = historyViewModel)
-              StatisticsScreen(viewModel = statisticsViewModel)
+             // StatisticsScreen(viewModel = statisticsViewModel)
                //ProfileScreen(viewModel = profileViewModel)
 
            }

@@ -7,36 +7,36 @@ import com.example.pawtracker.data.local.GpsPointEntity
 import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.utils.TimeUtils
 
-class WalkRepository(private val dao: WalkDao) {
+class WalkRepositoryImpl(
+    private val dao: WalkDao
+) : WalkRepository {
 
-    fun getAllWalks() = dao.getAllWalks()
+    override fun getAllWalks() = dao.getAllWalks()
 
-    fun getTodayWalks() =
+    override fun getTodayWalks() =
         dao.getWalksFromDay(TimeUtils.getStartOfDay())
 
-    fun getWalksByWeek() =
+    override fun getWalksByWeek() =
         dao.getWalksFromWeek(TimeUtils.getStartOfWeek())
 
-    suspend fun getWalkDetails(walkId: Long): WalkWithPoints {
+    override suspend fun getWalkDetails(walkId: Long): WalkWithPoints {
         return dao.getWalkWithPoints(walkId)
     }
 
     // Statistics
-
-    fun getTodayDistance() =
+    override fun getTodayDistance() =
         dao.getTotalDistanceSince(TimeUtils.getStartOfDay())
 
-    fun getTodayDuration() =
+    override fun getTodayDuration() =
         dao.getTotalDurationSince(TimeUtils.getStartOfDay())
 
-    fun getWeekDistance() =
+    override fun getWeekDistance() =
         dao.getTotalDistanceSince(TimeUtils.getStartOfWeek())
 
-    fun getWeekDuration() =
+    override fun getWeekDuration() =
         dao.getTotalDurationSince(TimeUtils.getStartOfWeek())
 
-
-    suspend fun insertWalkWithPoints(
+    override suspend fun insertWalkWithPoints(
         walk: WalkEntity,
         points: List<LocationPoint>
     ) {
@@ -59,7 +59,7 @@ class WalkRepository(private val dao: WalkDao) {
     }
 
 
-    suspend fun deleteWalk(walk: WalkEntity) {
+    override suspend fun deleteWalk(walk: WalkEntity) {
         dao.deleteWalk(walk)
     }
 }

@@ -30,7 +30,7 @@ class TrackingViewModel(
 
     //a reference to the coroutine that is collecting GPS updates:trackingjob
     private var trackingJob: Job? = null
-    private var useMockLocation = false
+    private var useMockLocation = true
     private var startTime: Long = 0L
     private var lastPoint: LocationPoint? = null
 
@@ -81,7 +81,7 @@ class TrackingViewModel(
     private fun handleNewPoint(point: LocationPoint) {
         val addedDistance = if (lastPoint != null) {
             calculateDistance(lastPoint!!, point)
-        } else 0.0
+        } else 0f
 
         lastPoint = point
         val elapsedTime = System.currentTimeMillis() - startTime
@@ -148,9 +148,9 @@ class TrackingViewModel(
 
     // DISTANCE CALCULATION
 
-    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Double {
+    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Float {
         val result = FloatArray(1)
         Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, result)
-        return result[0] / 1000.0 // meters → km
+        return result[0] / 1000f // meters → km
     }
 }
