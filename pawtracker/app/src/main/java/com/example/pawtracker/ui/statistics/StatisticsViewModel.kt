@@ -1,18 +1,16 @@
 package com.example.pawtracker.ui.statistics
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pawtracker.data.local.DogProfileDao
 import com.example.pawtracker.data.local.DogProfileEntity
 import com.example.pawtracker.data.repository.DogProfileRepository
+import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import com.example.pawtracker.data.repository.WalkRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 class StatisticsViewModel(
     private val walkRepository: WalkRepository,
@@ -45,12 +43,13 @@ class StatisticsViewModel(
                 weekDistance = weekDist,
                 weekDuration = weekDur,
                 goalDistance = profile.dailyDistanceGoal,
-                goalDuration = profile.dailyDurationGoal
+                goalDuration = profile.dailyDurationGoal,
+                dogName = profile.name,
+                imageUri = profile.imageUri
             )
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             StatisticsUiState()
         )
-
 }
