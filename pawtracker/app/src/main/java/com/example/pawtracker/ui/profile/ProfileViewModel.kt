@@ -72,9 +72,9 @@ class ProfileViewModel(
                 name = state.name,
                 breed = state.breed,
                 // Converts String inputs to correct numeric types defaulting to 0 if invalid
-                dailyDistanceGoal = state.dailyDistanceGoal.toDoubleOrNull() ?: 0.0,
+                dailyDistanceGoal = state.dailyDistanceGoal.toFloatOrNull() ?: 0f,
                 dailyDurationGoal = state.dailyDurationGoal.toLongOrNull() ?: 0L,
-                weeklyDistanceGoal = state.weeklyDistanceGoal.toDoubleOrNull() ?: 0.0,
+                weeklyDistanceGoal = state.weeklyDistanceGoal.toFloatOrNull() ?: 0f,
                 weeklyDurationGoal = state.weeklyDurationGoal.toLongOrNull() ?: 0L
             )
 
