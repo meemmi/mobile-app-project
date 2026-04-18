@@ -15,9 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.*
 
-/**
- * Main TrackingScreen composable
- */
+
+
 @Composable
 fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

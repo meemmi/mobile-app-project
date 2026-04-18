@@ -13,11 +13,13 @@ import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.data.repository.WalkRepository
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import kotlin.getValue
 import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.WalkRepositoryImpl
 import com.example.pawtracker.ui.history.HistoryViewModel
+import com.example.pawtracker.ui.navigation.NavGraph
 import com.example.pawtracker.ui.profile.ProfileScreen
 import com.example.pawtracker.ui.statistics.StatisticsViewModel
 import com.example.pawtracker.ui.profile.ProfileViewModel
@@ -25,8 +27,6 @@ import com.example.pawtracker.ui.statistics.StatisticsScreen
 
 
 class MainActivity : ComponentActivity() {
-
-    // 1. Create repository + ViewModel
     private val database by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -51,34 +51,29 @@ class MainActivity : ComponentActivity() {
 
     private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
 
-    // 2. Permission launcher must be inside class
+    // Permission launcher must be inside class
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             // You can show a message if needed
         }
-
-    // 3. Permission request function
     private fun requestLocationPermission() {
         requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 4. Ask for permission
+        // Ask for permission
         requestLocationPermission()
-
-        // 5. Edge to edge
         enableEdgeToEdge()
-
-        // 6. Set content
         setContent {
            PawTrackerTheme {
+               val navController = rememberNavController()
+               NavGraph(navController = navController)
            // Shows TrackingScreen with your unified ViewModel
 
             // TrackingScreen(viewModel = trackingViewModel)
              // HistoryScreen(viewModel = historyViewModel)
-              StatisticsScreen(viewModel = statisticsViewModel)
+             // StatisticsScreen(viewModel = statisticsViewModel)
              //  ProfileScreen(viewModel = profileViewModel)
 
            }
