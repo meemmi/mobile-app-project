@@ -7,7 +7,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.pawtracker.data.local.converters.LocationPointConverter
 
-@Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 4)
+@Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun walkDao(): WalkDao
     abstract fun dogProfileDao(): DogProfileDao

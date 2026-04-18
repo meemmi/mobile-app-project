@@ -2,7 +2,7 @@ package com.example.pawtracker.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.DogProfileEntity
-import com.example.pawtracker.data.repository.DogProfileRepository
+import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 
 class ProfileViewModel(
-    private val repository: DogProfileRepository
+    private val repository: DogProfileRepositoryImpl
 ) : ViewModel() {
 
     // Constant stream of profile data from the database to keep the UI screens synced
@@ -72,9 +72,9 @@ class ProfileViewModel(
                 name = state.name,
                 breed = state.breed,
                 // Converts String inputs to correct numeric types defaulting to 0 if invalid
-                dailyDistanceGoal = state.dailyDistanceGoal.toDoubleOrNull() ?: 0.0,
+                dailyDistanceGoal = state.dailyDistanceGoal.toFloatOrNull() ?: 0f,
                 dailyDurationGoal = state.dailyDurationGoal.toLongOrNull() ?: 0L,
-                weeklyDistanceGoal = state.weeklyDistanceGoal.toDoubleOrNull() ?: 0.0,
+                weeklyDistanceGoal = state.weeklyDistanceGoal.toFloatOrNull() ?: 0f,
                 weeklyDurationGoal = state.weeklyDurationGoal.toLongOrNull() ?: 0L
             )
 

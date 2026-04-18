@@ -10,9 +10,9 @@ data class DogProfileEntity(
     val name: String = "",
     val breed: String = "",
 
-    val dailyDistanceGoal: Double = 0.0,
+    val dailyDistanceGoal: Float = 0.0f,
     val dailyDurationGoal: Long = 0L,
 
-    val weeklyDistanceGoal: Double = 0.0,
+    val weeklyDistanceGoal: Float = 0.0f,
     val weeklyDurationGoal: Long = 0L
 )
