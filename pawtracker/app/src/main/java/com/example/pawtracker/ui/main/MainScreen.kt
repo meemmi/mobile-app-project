@@ -1,30 +1,94 @@
 package com.example.pawtracker.ui.main
 
 import androidx.compose.runtime.Composable
-
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 
 
 @Composable
 fun MainScreen(
-    uiState: MainUiState,
-    onContinueClick: () -> Unit
-) {
-    // your layout with big dog background etc.
-    Button(onClick = onContinueClick) {
-        Text("Continue")
-    }
-}
-@Composable
-fun MainRoute(
-    viewModel: MainViewModel = hiltViewModel(), // or your DI
+    viewModel: MainViewModel = viewModel(),
     onContinueClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    MainScreen(
-        uiState = uiState,
-        onContinueClick = onContinueClick
-    )
+    Scaffold(
+        bottomBar = {NavBar() }
+    ) { innerPadding ->
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+
+            // Background dog image
+            Image(
+                painter = painterResource(id = R.drawable.dog-background-image1),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(
+                    text = uiState.welcomeText,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = uiState.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = onContinueClick,
+                    modifier = Modifier.fillMaxWidth(0.6f)
+                ) {
+                    Text(text = "Continue")
+                }
+            }
+        }
+    }
 }
-
-
