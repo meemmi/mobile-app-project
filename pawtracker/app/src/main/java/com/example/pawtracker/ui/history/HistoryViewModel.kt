@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.repository.WalkRepository
 import com.example.pawtracker.data.mapper.toUiModel
+import com.example.pawtracker.utils.TimeUtils
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -58,6 +59,8 @@ class HistoryViewModel(
         )
     }
 
+
+
     private fun applyFilter(filter: WalkFilter) {
         val filtered = when (filter) {
             WalkFilter.Daily -> filterDaily(allWalks)
@@ -68,7 +71,7 @@ class HistoryViewModel(
     }
 
 
-    private fun filterDaily(list: List<WalkUiModel>): List<WalkUiModel> {
+   /* private fun filterDaily(list: List<WalkUiModel>): List<WalkUiModel> {
         val cal = Calendar.getInstance()
         val todayYear = cal.get(Calendar.YEAR)
         val todayDay = cal.get(Calendar.DAY_OF_YEAR)
@@ -88,5 +91,20 @@ class HistoryViewModel(
         return list.filter { walk ->
             walk.startTime in oneWeekAgo..now
         }
+    }*/
+
+    private fun filterDaily(list: List<WalkUiModel>): List<WalkUiModel> {
+        val startOfDay = TimeUtils.getStartOfDay()
+        return list.filter { walk ->
+            walk.startTime >= startOfDay
+        }
     }
+    private fun filterWeekly(list: List<WalkUiModel>): List<WalkUiModel> {
+        val startOfWeek = TimeUtils.getStartOfWeek()
+        return list.filter { walk ->
+            walk.startTime >= startOfWeek
+        }
+    }
+
+
 }
