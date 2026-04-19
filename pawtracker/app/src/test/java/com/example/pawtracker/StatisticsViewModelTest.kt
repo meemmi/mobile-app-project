@@ -1,26 +1,16 @@
 package com.example.pawtracker
 
 import app.cash.turbine.test
-import com.example.pawtracker.data.local.DogProfileEntity
-import com.example.pawtracker.data.repository.DogProfileRepository
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
-import com.example.pawtracker.data.repository.WalkRepository
 import com.example.pawtracker.ui.statistics.StatisticsViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import io.mockk.mockk
-import io.mockk.every
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 
