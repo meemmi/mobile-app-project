@@ -1,5 +1,5 @@
 package com.example.pawtracker.ui.navigation
-//Definen routes:
+//Define routes:
 sealed class Screen(val route: String) {
     object Main : Screen("main")
     object Tracking : Screen("tracking")

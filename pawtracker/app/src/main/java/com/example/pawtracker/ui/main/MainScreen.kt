@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.navigation.NavHostController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +43,8 @@ fun MainScreen(
     viewModel: MainViewModel = viewModel(),
     onContinueClick: () -> Unit,
     isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit
+    onToggleTheme: () -> Unit,
+    navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -63,7 +65,7 @@ fun MainScreen(
                 }
             )
         },
-        bottomBar = {NavBar() }
+        bottomBar = {NavBar(navController) }
     ) { innerPadding ->
 
         Box(

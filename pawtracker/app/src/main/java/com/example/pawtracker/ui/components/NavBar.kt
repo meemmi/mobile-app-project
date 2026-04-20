@@ -17,11 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.pawtracker.R
+import com.example.pawtracker.ui.history.HistoryScreen
+import com.example.pawtracker.ui.navigation.Screen
 
 
 @Composable
-fun NavBar() {
+fun NavBar(navController: NavHostController) {
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     Box(
         modifier = Modifier.height(55.dp)   // ← make it smaller (default is 80dp)
     ) {
@@ -31,28 +36,28 @@ fun NavBar() {
 
             NavigationBarItem(
                 selected = true,
-                onClick = {},
+                onClick = {navController.navigate(Screen.Main.route)},
                 icon = { Icon(Icons.Filled.Home, contentDescription = "home") },
                 label = { Text("home") }
             )
 
             NavigationBarItem(
                 selected = false,
-                onClick = {},
+                onClick = {navController.navigate(Screen.Tracking.route)},
                 icon = { Icon(Icons.Filled.Place, contentDescription = "map") },
                 label = { Text("map") }
             )
 
             NavigationBarItem(
                 selected = false,
-                onClick = {},
+                onClick = {navController.navigate(Screen.History.route)},
                 icon = { Icon(Icons.Filled.History, contentDescription = "history") },
                 label = { Text("history") }
             )
 
             NavigationBarItem(
                 selected = false,
-                onClick = {},
+                onClick = {navController.navigate(Screen.Profile.route)},
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.dog_icon),

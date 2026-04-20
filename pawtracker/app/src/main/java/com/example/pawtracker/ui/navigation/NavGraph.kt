@@ -22,7 +22,8 @@ fun NavGraph(navController: NavHostController,
             navController.navigate(Screen.Tracking.route)
         },
             isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme) }
+            onToggleTheme = onToggleTheme,
+            navController = navController ) }
         composable(Screen.Tracking.route) {TrackingScreen() }
         composable(Screen.History.route) {HistoryScreen() }
         composable(Screen.Statistics.route) {StatisticsScreen()}
