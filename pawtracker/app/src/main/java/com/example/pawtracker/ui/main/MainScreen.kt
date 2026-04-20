@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import com.example.pawtracker.R
 import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,17 +28,41 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.pawtracker.ui.components.NavBar
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.ExperimentalMaterial3Api
 
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = viewModel(),
-    onContinueClick: () -> Unit
+    onContinueClick: () -> Unit,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    IconButton(onClick = onToggleTheme) {
+                        Icon(
+                            imageVector = if (isDarkTheme)
+                                Icons.Default.LightMode
+                            else
+                                Icons.Default.DarkMode,
+                            contentDescription = "Toggle Theme"
+                        )
+                    }
+                }
+            )
+        },
         bottomBar = {NavBar() }
     ) { innerPadding ->
 
@@ -45,6 +71,20 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            IconButton(
+                onClick = onToggleTheme,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = if (isDarkTheme)
+                        Icons.Default.LightMode
+                    else
+                        Icons.Default.DarkMode,
+                    contentDescription = "Toggle Theme"
+                )
+            }
 
             // Background dog image
             Image(
@@ -68,12 +108,11 @@ fun MainScreen(
                 Text(
                     text = uiState.welcomeText,
                     //style = MaterialTheme.typography.headlineMedium,
-                    style = MaterialTheme.typography.headlineMedium.copy(
+                    style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorSchema.onPrimaryContainer
-                    ),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
 
-                            color = Color.White
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -81,7 +120,7 @@ fun MainScreen(
                 Text(
                     text = uiState.description,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White
+
                 )
 
                 Spacer(modifier = Modifier.height(470.dp))

@@ -10,15 +10,19 @@ import com.example.pawtracker.ui.statistics.StatisticsScreen
 import com.example.pawtracker.ui.tracking.TrackingScreen
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController,
+             isDarkTheme: Boolean,
+             onToggleTheme: () -> Unit) {
     NavHost(
         navController = navController,
         startDestination = Screen.Main.route
     ) {
         //Navigate to a composable
-        composable(Screen.Main.route) {MainScreen(onContinueClick = {
+        composable(Screen.Main.route) {MainScreen( onContinueClick = {
             navController.navigate(Screen.Tracking.route)
-        }) }
+        },
+            isDarkTheme = isDarkTheme,
+            onToggleTheme = onToggleTheme) }
         composable(Screen.Tracking.route) {TrackingScreen() }
         composable(Screen.History.route) {HistoryScreen() }
         composable(Screen.Statistics.route) {StatisticsScreen()}

@@ -13,6 +13,10 @@ import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.data.repository.WalkRepository
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import kotlin.getValue
@@ -66,9 +70,14 @@ class MainActivity : ComponentActivity() {
         requestLocationPermission()
         enableEdgeToEdge()
         setContent {
-           PawTrackerTheme {
+            var isDarkTheme by remember { mutableStateOf(false) }
+           PawTrackerTheme(darkTheme = isDarkTheme) {
                val navController = rememberNavController()
-               NavGraph(navController = navController)
+               NavGraph(navController = navController,
+                   isDarkTheme = isDarkTheme,
+                   onToggleTheme = {
+                       isDarkTheme = !isDarkTheme
+                   })
            // Shows TrackingScreen with your unified ViewModel
 
             // TrackingScreen(viewModel = trackingViewModel)
@@ -81,18 +90,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES,
-    name = "Dark"
-)
-@Preview(
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO,
-    name = "Light"
-)
+@Preview(showBackground = true)
 @Composable
-fun PawTrackerPreview() {
+fun GreetingPreview() {
     PawTrackerTheme {
-        val navController = rememberNavController()
-        NavGraph(navController = navController)
+
     }
 }
