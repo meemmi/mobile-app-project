@@ -60,16 +60,17 @@ fun MainScreen(
                     .padding(
                         start = 24.dp,
                         end = 24.dp,
-                        top = 200.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                        top = 120.dp),
+                horizontalAlignment = Alignment.Start,
+
             ) {
 
                 Text(
                     text = uiState.welcomeText,
                     //style = MaterialTheme.typography.headlineMedium,
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorSchema.onPrimaryContainer
                     ),
 
                             color = Color.White
@@ -83,11 +84,12 @@ fun MainScreen(
                     color = Color.White
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(470.dp))
 
                 Button(
                     onClick = onContinueClick,
                     modifier = Modifier.fillMaxWidth(0.6f)
+                        .align(Alignment.CenterHorizontally)
                 ) {
                     Text(text = "Continue")
                 }

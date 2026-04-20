@@ -81,11 +81,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// 7. Preview function must be outside MainActivity
-@Preview(showBackground = true)
+@Preview(
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark"
+)
+@Preview(
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO,
+    name = "Light"
+)
 @Composable
-fun GreetingPreview() {
+fun PawTrackerPreview() {
     PawTrackerTheme {
-        // You can preview UI here
+        val navController = rememberNavController()
+        NavGraph(navController = navController)
     }
 }
