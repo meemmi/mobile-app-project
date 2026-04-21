@@ -65,7 +65,7 @@ fun MainScreen(
                 }
             )
         },
-        bottomBar = {NavBar(navController) }
+
     ) { innerPadding ->
 
         Box(
@@ -110,7 +110,7 @@ fun MainScreen(
                 Text(
                     text = uiState.welcomeText,
                     //style = MaterialTheme.typography.headlineMedium,
-                    style = MaterialTheme.typography.headlineLarge.copy(
+                    style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                     )

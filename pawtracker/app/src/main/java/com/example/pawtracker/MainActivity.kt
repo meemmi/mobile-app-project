@@ -28,6 +28,11 @@ import com.example.pawtracker.ui.profile.ProfileScreen
 import com.example.pawtracker.ui.statistics.StatisticsViewModel
 import com.example.pawtracker.ui.profile.ProfileViewModel
 import com.example.pawtracker.ui.statistics.StatisticsScreen
+import androidx.compose.runtime.*
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.saveable.rememberSaveable
+import com.example.pawtracker.ui.components.NavBar
 
 
 class MainActivity : ComponentActivity() {
@@ -70,22 +75,25 @@ class MainActivity : ComponentActivity() {
         requestLocationPermission()
         enableEdgeToEdge()
         setContent {
-            var isDarkTheme by remember { mutableStateOf(false) }
-           PawTrackerTheme(darkTheme = isDarkTheme) {
-               val navController = rememberNavController()
-               NavGraph(navController = navController,
-                   isDarkTheme = isDarkTheme,
-                   onToggleTheme = {
-                       isDarkTheme = !isDarkTheme
-                   })
-           // Shows TrackingScreen with your unified ViewModel
+            val systemDark = isSystemInDarkTheme()
+            var isDarkTheme by rememberSaveable { mutableStateOf(systemDark) }
 
-            // TrackingScreen(viewModel = trackingViewModel)
-             // HistoryScreen(viewModel = historyViewModel)
-             // StatisticsScreen(viewModel = statisticsViewModel)
-             //  ProfileScreen(viewModel = profileViewModel)
+            PawTrackerTheme(darkTheme = isDarkTheme) {
+                val navController = rememberNavController()
 
-           }
+                Scaffold(
+                    bottomBar = { NavBar(navController) }
+                ) { innerPadding ->
+
+                    NavGraph(
+                        navController = navController,
+                        isDarkTheme = isDarkTheme,
+                        onToggleTheme = {
+                            isDarkTheme = !isDarkTheme
+                        }
+                    )
+                }
+            }
         }
     }
 }

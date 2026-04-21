@@ -11,9 +11,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pawtracker.R
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
+
+
+
+
 
 
 
@@ -48,7 +58,10 @@ fun TrackingLayout(
             modifier = Modifier.weight(1f)
         )
 
-        Divider(thickness = 1.dp, color = Color.Black)
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color.Black
+        )
 
         Column(
             modifier = Modifier
@@ -77,19 +90,19 @@ fun TrackingMap(
     uiState: TrackingUiState,
     modifier: Modifier = Modifier
 ) {
+    //initial position before real GPS location arrives.
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            com.google.android.gms.maps.model.LatLng(60.1699, 24.9384),
+            LatLng(60.1699, 24.9384),
             15f
         )
     }
-
+    // Move camera when location updates
     LaunchedEffect(uiState.currentLocation) {
         uiState.currentLocation?.let { point ->
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLng(
-                    com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude)
-                )
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(
+                    LatLng(point.latitude, point.longitude),
+                    15f
             )
         }
     }
@@ -97,20 +110,23 @@ fun TrackingMap(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(isMyLocationEnabled = uiState.locationPermission),
+        properties = MapProperties(
+            isMyLocationEnabled = uiState.locationPermission),
         uiSettings = MapUiSettings(
             zoomControlsEnabled = false,
             myLocationButtonEnabled = true
         )
     ) {
         Polyline(
-            points = uiState.points.map { com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }
+            points = uiState.points.map {
+                LatLng(it.latitude, it.longitude)
+            }
         )
 
         uiState.currentLocation?.let { point ->
             Marker(
                 state = MarkerState(
-                    position = com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude)
+                    position = LatLng(point.latitude, point.longitude)
                 ),
                 title = "Current"
             )

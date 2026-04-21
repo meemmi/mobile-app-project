@@ -26,47 +26,66 @@ import com.example.pawtracker.ui.navigation.Screen
 
 @Composable
 fun NavBar(navController: NavHostController) {
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    Box(
-        modifier = Modifier.height(55.dp)   // ← make it smaller (default is 80dp)
-    ) {
-        NavigationBar(
-            modifier = Modifier.fillMaxSize()
-        ) {
+    val currentRoute =
+        navController.currentBackStackEntryAsState().value?.destination?.route
 
-            NavigationBarItem(
-                selected = true,
-                onClick = {navController.navigate(Screen.Main.route)},
-                icon = { Icon(Icons.Filled.Home, contentDescription = "home") },
-                label = { Text("home") }
-            )
+    NavigationBar {
 
-            NavigationBarItem(
-                selected = false,
-                onClick = {navController.navigate(Screen.Tracking.route)},
-                icon = { Icon(Icons.Filled.Place, contentDescription = "map") },
-                label = { Text("map") }
-            )
+        NavigationBarItem(
+            selected = currentRoute == Screen.Main.route,
+            onClick = {
+                navController.navigate(Screen.Main.route) {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = { Icon(Icons.Filled.Home, contentDescription = "home") },
+            label = { Text("home") }
+        )
 
-            NavigationBarItem(
-                selected = false,
-                onClick = {navController.navigate(Screen.History.route)},
-                icon = { Icon(Icons.Filled.History, contentDescription = "history") },
-                label = { Text("history") }
-            )
+        NavigationBarItem(
+            selected = currentRoute == Screen.Tracking.route,
+            onClick = {
+                navController.navigate(Screen.Tracking.route) {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = { Icon(Icons.Filled.Place, contentDescription = "map") },
+            label = { Text("map") }
+        )
 
-            NavigationBarItem(
-                selected = false,
-                onClick = {navController.navigate(Screen.Profile.route)},
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.dog_icon),
-                        contentDescription = "profile"
-                    )
-                },
-                label = { Text("profile") }
-            )
-        }
+        NavigationBarItem(
+            selected = currentRoute == Screen.History.route,
+            onClick = {
+                navController.navigate(Screen.History.route) {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = { Icon(Icons.Filled.History, contentDescription = "history") },
+            label = { Text("history") }
+        )
+
+        NavigationBarItem(
+            selected = currentRoute == Screen.Profile.route,
+            onClick = {
+                navController.navigate(Screen.Profile.route) {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.dog_icon),
+                    contentDescription = "profile"
+                )
+            },
+            label = { Text("profile") }
+        )
     }
 }
-

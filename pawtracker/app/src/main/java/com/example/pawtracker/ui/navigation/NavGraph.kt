@@ -30,4 +30,3 @@ fun NavGraph(navController: NavHostController,
         composable(Screen.Profile.route) { ProfileScreen() }
     }
 }
-// By using the parameters of the route class you can pass data to the given destination with full type safet

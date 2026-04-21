@@ -33,7 +33,8 @@ fun HistoryScreen(viewModel: HistoryViewModel = viewModel()) {
             onSelect = { viewModel.setFilter(it) }
         )
 
-        HistoryList(walks = uiState.walks)
+        HistoryList(walks = uiState.walks ?: emptyList())
+
     }
 }
 
@@ -90,7 +91,7 @@ fun WalkHistoryItem(walk: WalkUiModel) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text(walk.date, style = MaterialTheme.typography.titleMedium)
+        Text(walk.date, style = MaterialTheme.typography.bodyLarge)
         Text("%.2f km — %s".format(walk.distanceKm, timeFormatted))
         Divider(modifier = Modifier.padding(top = 8.dp))
     }
