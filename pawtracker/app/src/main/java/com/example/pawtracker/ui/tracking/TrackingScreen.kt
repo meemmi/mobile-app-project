@@ -7,10 +7,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pawtracker.R
+import com.example.pawtracker.data.local.AppDatabase
+import com.example.pawtracker.data.repository.GPSRepository
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -20,21 +23,31 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
-
-
-
-
-
+import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 
 @Composable
-fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
+fun TrackingScreen(innerPadding: PaddingValues) {
+    val context = LocalContext.current
+
+    val db = AppDatabase.getDatabase(context)
+
+    val gpsRepository = GPSRepository(context)
+    val walkRepository = WalkRepositoryImpl(db.walkDao())
+
+    // 3. Create ViewModel with factory
+    val viewModel: TrackingViewModel = viewModel(
+        factory = TrackingViewModelFactory(gpsRepository, walkRepository)
+    )
+
     val uiState by viewModel.uiState.collectAsState()
 
     TrackingLayout(
         uiState = uiState,
         onStart = { viewModel.startTracking() },
-        onStop = { viewModel.stopTracking() }
+        onStop = { viewModel.stopTracking() },
+        innerPadding = innerPadding
+
     )
 }
 
@@ -45,12 +58,15 @@ fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
 fun TrackingLayout(
     uiState: TrackingUiState,
     onStart: () -> Unit,
-    onStop: () -> Unit
+    onStop: () -> Unit,
+    innerPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+           .padding(innerPadding)
+           .padding(24.dp)
     ) {
 
         TrackingMap(

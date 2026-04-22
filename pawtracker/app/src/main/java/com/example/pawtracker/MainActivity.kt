@@ -88,9 +88,8 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navController,
                         isDarkTheme = isDarkTheme,
-                        onToggleTheme = {
-                            isDarkTheme = !isDarkTheme
-                        }
+                        onToggleTheme = {isDarkTheme = !isDarkTheme },
+                        innerPadding = innerPadding
                     )
                 }
             }

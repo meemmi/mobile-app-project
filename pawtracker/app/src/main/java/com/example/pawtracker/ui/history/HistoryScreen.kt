@@ -3,12 +3,14 @@ package com.example.pawtracker.ui.history
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,23 +19,40 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-
+import androidx.compose.ui.platform.LocalContext
+import com.example.pawtracker.data.local.AppDatabase
+import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 @Composable
-fun HistoryScreen(viewModel: HistoryViewModel = viewModel()) {
+fun HistoryScreen(innerPadding: PaddingValues) {
+    val context = LocalContext.current
+
+    val repository = remember {
+        val db = AppDatabase.getDatabase(context)
+        WalkRepositoryImpl(db.walkDao())
+    }
+
+    val viewModel: HistoryViewModel = viewModel(
+        factory = HistoryViewModelFactory(repository)
+    )
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()
+        .padding(innerPadding)) {
 
         HistoryFilterTabs(
             selected = uiState.filter,
             onSelect = { viewModel.setFilter(it) }
         )
+        Spacer(modifier = Modifier.height(8.dp))
 
-        HistoryList(walks = uiState.walks ?: emptyList())
+        HistoryList(walks = uiState.walks ?: emptyList(),
+            modifier = Modifier.weight(1f)
+            )
 
     }
 }
@@ -68,7 +87,7 @@ fun FilterTab(text: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun HistoryList(walks: List<WalkUiModel>) {
+fun HistoryList(walks: List<WalkUiModel>,  modifier: Modifier = Modifier) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(walks) { walk ->
             WalkHistoryItem(walk)
@@ -93,7 +112,7 @@ fun WalkHistoryItem(walk: WalkUiModel) {
     ) {
         Text(walk.date, style = MaterialTheme.typography.bodyLarge)
         Text("%.2f km — %s".format(walk.distanceKm, timeFormatted))
-        Divider(modifier = Modifier.padding(top = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
     }
 }
 

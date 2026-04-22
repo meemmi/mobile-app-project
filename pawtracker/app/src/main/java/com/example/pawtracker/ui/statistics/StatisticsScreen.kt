@@ -1,6 +1,7 @@
 package com.example.pawtracker.ui.statistics
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,9 +16,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 // For testing
 @Composable
-fun StatisticsScreen(
+fun StatisticsScreen(innerPadding: PaddingValues,
 
-    viewModel: StatisticsViewModel = viewModel()
+                     viewModel: StatisticsViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
 

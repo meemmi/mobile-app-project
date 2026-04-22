@@ -1,14 +1,11 @@
 package com.example.pawtracker.ui.components
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-//import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Place
 
 import androidx.compose.material.icons.filled.History
@@ -22,6 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.history.HistoryScreen
 import com.example.pawtracker.ui.navigation.Screen
+
 
 
 @Composable
