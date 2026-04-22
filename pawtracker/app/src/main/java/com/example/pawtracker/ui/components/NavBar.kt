@@ -1,5 +1,8 @@
 package com.example.pawtracker.ui.components
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
@@ -12,6 +15,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -27,7 +31,9 @@ fun NavBar(navController: NavHostController) {
     val currentRoute =
         navController.currentBackStackEntryAsState().value?.destination?.route
 
-    NavigationBar {
+    NavigationBar(
+        modifier = Modifier.height(64.dp)
+    ) {
 
         NavigationBarItem(
             selected = currentRoute == Screen.Main.route,
@@ -38,7 +44,10 @@ fun NavBar(navController: NavHostController) {
                     restoreState = true
                 }
             },
-            icon = { Icon(Icons.Filled.Home, contentDescription = "home") },
+            icon = { Icon(Icons.Filled.Home, contentDescription = "home",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(top = 4.dp)) },
             label = { Text("home") }
         )
 
@@ -51,7 +60,10 @@ fun NavBar(navController: NavHostController) {
                     restoreState = true
                 }
             },
-            icon = { Icon(Icons.Filled.Place, contentDescription = "map") },
+            icon = { Icon(Icons.Filled.Place, contentDescription = "map",
+                        modifier = Modifier
+                       .size(24.dp)
+                      .padding(top = 4.dp)) },
             label = { Text("map") }
         )
 
@@ -64,7 +76,10 @@ fun NavBar(navController: NavHostController) {
                     restoreState = true
                 }
             },
-            icon = { Icon(Icons.Filled.History, contentDescription = "history") },
+            icon = { Icon(Icons.Filled.History, contentDescription = "history",
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(top = 4.dp)) },
             label = { Text("history") }
         )
 
@@ -79,8 +94,11 @@ fun NavBar(navController: NavHostController) {
             },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.dog_icon),
-                    contentDescription = "profile"
+                    painter = painterResource(id = R.drawable.navbar_dog_icon),
+                    contentDescription = "profile",
+                    modifier = Modifier.size(24.dp).padding(top = 4.dp),
+                    tint = Color.Unspecified,
+
                 )
             },
             label = { Text("profile") }

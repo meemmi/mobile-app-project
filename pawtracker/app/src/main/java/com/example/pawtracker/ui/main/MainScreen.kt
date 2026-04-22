@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 
@@ -65,7 +66,7 @@ fun MainScreen(
 
             // Background dog image
             Image(
-                painter = painterResource(id = R.drawable.background1),
+                painter = painterResource(id = R.drawable.background_mainscreen),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -84,9 +85,9 @@ fun MainScreen(
 
                 Text(
                     text = uiState.welcomeText,
-                    //style = MaterialTheme.typography.headlineMedium,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        lineHeight = 34.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
 
@@ -96,7 +97,7 @@ fun MainScreen(
 
                 Text(
                     text = uiState.description,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 20.sp),
 
                 )
 
