@@ -35,31 +35,46 @@ import coil.compose.rememberAsyncImagePainter
 
 // Navigation padding
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.example.pawtracker.R
+import com.example.pawtracker.data.local.AppDatabase
+import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 
 @Composable
-fun ProfileScreen(
-    innerPadding: PaddingValues,
-    viewModel: ProfileViewModel = viewModel()
-) {
+fun ProfileScreen(innerPadding: PaddingValues) {
+    val context = LocalContext.current
+
+    val repository = remember {
+        val db = AppDatabase.getDatabase(context)
+        DogProfileRepositoryImpl(db.dogProfileDao())
+    }
+
+    val viewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModelFactory(repository)
+    )
     val state by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer) // Figma background
             .padding(innerPadding)
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 🐶 Header
+        Spacer(modifier = Modifier.height(24.dp))
+
         ProfileHeader(
             imageUri = state.imageUri,
             name = state.name
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // 📋 Info Card
         ProfileInfoCard(
             breed = state.breed,
             age = "4 years old",
@@ -67,29 +82,33 @@ fun ProfileScreen(
             weight = "65–75 pounds"
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // 🎯 Daily Goal
         DailyGoalCard(
             minutes = state.dailyDurationGoal,
             distance = state.dailyDistanceGoal
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // ✏️ Edit Button
         Button(
             onClick = {},
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(50.dp),
+                .fillMaxWidth()
+                .height(52.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text("Edit profile")
+            Text(
+                "Edit profile",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 @Composable
@@ -101,35 +120,40 @@ fun ProfileHeader(
 
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(120.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
-            if (imageUri.isNotEmpty()) {
-                Image(
-                    painter = rememberAsyncImagePainter(imageUri),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Pets,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(40.dp)
-                )
+            when {
+                imageUri.isNotEmpty() -> {
+                    // User-selected image
+                    Image(
+                        painter = rememberAsyncImagePainter(imageUri),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                else -> {
+                    // Default local drawable (dog1.jpg)
+                    Image(
+                        painter = painterResource(id = R.drawable.dog1),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = if (name.isNotEmpty()) name else "Your Dog",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -143,21 +167,20 @@ fun ProfileInfoCard(
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
 
-            InfoRow(Icons.Default.Pets, breed)
-            InfoRow(Icons.Default.Cake, age)
-            InfoRow(Icons.Default.Height, height)
-            InfoRow(Icons.Default.MonitorWeight, weight)
+            InfoRow(R.drawable.dog_age, age)
+            InfoRow(R.drawable.dog_height, height)
+            InfoRow(R.drawable.dog_weight, weight)
         }
     }
 }
 @Composable
-fun InfoRow(icon: ImageVector, text: String) {
+fun InfoRow(iconRes: Int, text: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -166,10 +189,10 @@ fun InfoRow(icon: ImageVector, text: String) {
     ) {
 
         Icon(
-            imageVector = icon,
+            painter = painterResource(id = iconRes),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(22.dp)
+            tint = Color.Unspecified,
+            modifier = Modifier.size(24.dp)
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -181,6 +204,7 @@ fun InfoRow(icon: ImageVector, text: String) {
         )
     }
 }
+
 @Composable
 fun DailyGoalCard(
     minutes: String,
@@ -189,7 +213,7 @@ fun DailyGoalCard(
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -201,7 +225,7 @@ fun DailyGoalCard(
             Text(
                 text = "Daily Activity Goal",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -238,7 +262,12 @@ fun GoalItem(value: String, label: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
+
+
+
+
+
