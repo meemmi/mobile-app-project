@@ -14,6 +14,7 @@ class TrackingViewModelFactory(
         if (modelClass.isAssignableFrom(TrackingViewModel::class.java)) {
             return TrackingViewModel(gpsRepository, walkRepository) as T
         }
+
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

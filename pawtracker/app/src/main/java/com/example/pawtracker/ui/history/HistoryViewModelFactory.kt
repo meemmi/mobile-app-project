@@ -13,6 +13,7 @@ class HistoryViewModelFactory(
         if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
             return HistoryViewModel(repository) as T
         }
+
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
