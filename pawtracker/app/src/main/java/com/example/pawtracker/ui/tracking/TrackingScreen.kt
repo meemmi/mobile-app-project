@@ -7,25 +7,47 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pawtracker.R
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.example.pawtracker.data.local.AppDatabase
+import com.example.pawtracker.data.repository.GPSRepository
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
-/**
- * Main TrackingScreen composable
- */
+
 @Composable
-fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
+fun TrackingScreen(innerPadding: PaddingValues) {
+    val context = LocalContext.current
+
+    val db = AppDatabase.getDatabase(context)
+
+    val gpsRepository = GPSRepository(context)
+    val walkRepository = WalkRepositoryImpl(db.walkDao())
+
+    // 3. Create ViewModel with factory
+    val viewModel: TrackingViewModel = viewModel(
+        factory = TrackingViewModelFactory(gpsRepository, walkRepository)
+    )
+
     val uiState by viewModel.uiState.collectAsState()
 
     TrackingLayout(
         uiState = uiState,
         onStart = { viewModel.startTracking() },
-        onStop = { viewModel.stopTracking() }
+        onStop = { viewModel.stopTracking() },
+        innerPadding = innerPadding
+
     )
 }
 
@@ -36,12 +58,15 @@ fun TrackingScreen(viewModel: TrackingViewModel = viewModel()) {
 fun TrackingLayout(
     uiState: TrackingUiState,
     onStart: () -> Unit,
-    onStop: () -> Unit
+    onStop: () -> Unit,
+    innerPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+           .padding(innerPadding)
+           .padding(24.dp)
     ) {
 
         TrackingMap(
@@ -49,7 +74,10 @@ fun TrackingLayout(
             modifier = Modifier.weight(1f)
         )
 
-        Divider(thickness = 1.dp, color = Color.Black)
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color.Black
+        )
 
         Column(
             modifier = Modifier
@@ -78,19 +106,19 @@ fun TrackingMap(
     uiState: TrackingUiState,
     modifier: Modifier = Modifier
 ) {
+    //initial position before real GPS location arrives.
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            com.google.android.gms.maps.model.LatLng(60.1699, 24.9384),
+            LatLng(60.1699, 24.9384),
             15f
         )
     }
-
+    // Move camera when location updates
     LaunchedEffect(uiState.currentLocation) {
         uiState.currentLocation?.let { point ->
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLng(
-                    com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude)
-                )
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(
+                    LatLng(point.latitude, point.longitude),
+                    15f
             )
         }
     }
@@ -98,20 +126,23 @@ fun TrackingMap(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(isMyLocationEnabled = uiState.locationPermission),
+        properties = MapProperties(
+            isMyLocationEnabled = uiState.locationPermission),
         uiSettings = MapUiSettings(
             zoomControlsEnabled = false,
             myLocationButtonEnabled = true
         )
     ) {
         Polyline(
-            points = uiState.points.map { com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }
+            points = uiState.points.map {
+                LatLng(it.latitude, it.longitude)
+            }
         )
 
         uiState.currentLocation?.let { point ->
             Marker(
                 state = MarkerState(
-                    position = com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude)
+                    position = LatLng(point.latitude, point.longitude)
                 ),
                 title = "Current"
             )

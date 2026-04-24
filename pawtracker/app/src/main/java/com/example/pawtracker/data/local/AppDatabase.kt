@@ -2,15 +2,37 @@ package com.example.pawtracker.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.pawtracker.data.local.converters.LocationPointConverter
+import android.content.Context
+import androidx.room.Room
+
 
 @Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun walkDao(): WalkDao
     abstract fun dogProfileDao(): DogProfileDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "pawtracker_db"
+                )
+                    .addMigrations(MIGRATION_1_2)
+                    .fallbackToDestructiveMigration(true)
+                    .build()
+
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
