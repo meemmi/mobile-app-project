@@ -62,6 +62,7 @@ fun ProfileScreen(innerPadding: PaddingValues) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer) // Figma background
             .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

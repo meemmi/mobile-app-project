@@ -33,9 +33,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.pawtracker.ui.components.NavBar
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.pawtracker.ui.main.MainViewModel
 
 
 class MainActivity : ComponentActivity() {
+
     private val database by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -60,11 +64,10 @@ class MainActivity : ComponentActivity() {
 
     private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
 
-    // Permission launcher must be inside class
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            // You can show a message if needed
         }
+
     private fun requestLocationPermission() {
         requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
@@ -75,6 +78,10 @@ class MainActivity : ComponentActivity() {
         requestLocationPermission()
         enableEdgeToEdge()
         setContent {
+
+            val mainViewModel: MainViewModel = viewModel(
+                factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            )
             val systemDark = isSystemInDarkTheme()
             var isDarkTheme by rememberSaveable { mutableStateOf(systemDark) }
 
@@ -82,14 +89,16 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 Scaffold(
-                    bottomBar = { NavBar(navController) }
+                    bottomBar = { NavBar(navController, has_completed_onboarding = mainViewModel.hasCompletedOnboarding ?: false) }
                 ) { innerPadding ->
 
                     NavGraph(
                         navController = navController,
                         isDarkTheme = isDarkTheme,
                         onToggleTheme = {isDarkTheme = !isDarkTheme },
-                        innerPadding = innerPadding
+                        innerPadding = innerPadding,
+                        viewModel = mainViewModel,
+                        statisticsViewModel = statisticsViewModel
                     )
                 }
             }
