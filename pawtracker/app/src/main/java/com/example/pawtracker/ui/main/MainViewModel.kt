@@ -19,10 +19,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState
 
-    // Tämä pidetään mutableStatena, jotta Compose reagoi siihen heti
-   /* var isUserOld by mutableStateOf(false)
-        private set
-    */
     var hasCompletedOnboarding by mutableStateOf<Boolean?>(null)
         private set
 
@@ -37,7 +33,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun completeOnboarding() {
         viewModelScope.launch {
             repository.setOnboardingCompleted()
-            // Tieto päivittyy automaattisesti isUserOldFlow:n kautta
         }
     }
 }

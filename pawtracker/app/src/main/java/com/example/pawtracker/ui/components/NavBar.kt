@@ -1,6 +1,9 @@
 package com.example.pawtracker.ui.components
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
@@ -37,7 +40,8 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
 
     if (currentRoute != Screen.Main.route) {
         NavigationBar(
-            modifier = Modifier.height(64.dp)
+            modifier = Modifier.navigationBarsPadding(),
+            windowInsets = WindowInsets.navigationBars
         ) {
 
             NavigationBarItem(
@@ -54,7 +58,8 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
                     Icon(
                         Icons.Filled.BarChart,
                         contentDescription = "statistics",
-                        modifier = Modifier.size(24.dp).padding(top = 4.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                     )
                 },
                 label = { Text("stats") }
@@ -75,7 +80,6 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
                         Icons.Filled.Place, contentDescription = "map",
                         modifier = Modifier
                             .size(24.dp)
-                            .padding(top = 4.dp)
                     )
                 },
                 label = { Text("map") }
@@ -95,7 +99,6 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
                         Icons.Filled.History, contentDescription = "history",
                         modifier = Modifier
                             .size(24.dp)
-                            .padding(top = 4.dp)
                     )
                 },
                 label = { Text("history") }
@@ -114,7 +117,7 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
                     Icon(
                         painter = painterResource(id = R.drawable.navbar_dog_icon),
                         contentDescription = "profile",
-                        modifier = Modifier.size(24.dp).padding(top = 4.dp),
+                        modifier = Modifier.size(24.dp),
                         tint = Color.Unspecified,
 
                         )

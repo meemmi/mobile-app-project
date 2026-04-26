@@ -63,9 +63,10 @@ fun TrackingLayout(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+           .fillMaxSize()
+           .background(MaterialTheme.colorScheme.background)
            .padding(innerPadding)
+           .consumeWindowInsets(innerPadding)
            .padding(24.dp)
     ) {
 

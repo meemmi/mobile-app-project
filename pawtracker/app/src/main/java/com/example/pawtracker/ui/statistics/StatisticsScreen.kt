@@ -3,6 +3,8 @@ package com.example.pawtracker.ui.statistics
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -19,7 +21,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun StatisticsScreen(innerPadding: PaddingValues, viewModel: StatisticsViewModel) {
     val state by viewModel.uiState.collectAsState()
 
-    Column(modifier = Modifier.padding(20.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+        .consumeWindowInsets(innerPadding)
+        .padding(20.dp)) {
 
         Text(text = "Picture: ${state.imageUri}")
 
