@@ -78,7 +78,10 @@ class FakeWalkRepository(
     override suspend fun insertWalkWithPoints(
         walk: WalkEntity,
         points: List<LocationPoint>
-    ) {}
+    ) {
+        savedWalk = walk
+        savedPoints = points
+    }
 
     override suspend fun deleteWalk(walk: WalkEntity) {}
 }

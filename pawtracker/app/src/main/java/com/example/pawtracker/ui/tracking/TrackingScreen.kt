@@ -35,7 +35,7 @@ fun TrackingScreen(innerPadding: PaddingValues) {
     val gpsRepository = GPSRepositoryImpl(context)
     val walkRepository = WalkRepositoryImpl(db.walkDao())
 
-    // 3. Create ViewModel with factory
+    //  Create ViewModel with factory
     val viewModel: TrackingViewModel = viewModel(
         factory = TrackingViewModelFactory(gpsRepository, walkRepository)
     )

@@ -9,8 +9,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import android.location.Location
 import com.example.pawtracker.data.repository.GPSRepository
+import kotlin.math.*
+
 
 
 /**
@@ -22,7 +23,7 @@ import com.example.pawtracker.data.repository.GPSRepository
 class TrackingViewModel(
     private val gpsRepository: GPSRepository,
     private val walkRepository: WalkRepository
-) : ViewModel() {git add
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TrackingUiState())
     val uiState: StateFlow<TrackingUiState> = _uiState
@@ -54,28 +55,25 @@ class TrackingViewModel(
         }
     }
 
-    fun startTracking() {
-        // Reset UI
-        _uiState.value = TrackingUiState(tracking = true)
 
-        startTime = System.currentTimeMillis()
-        lastPoint = null
+   fun startTracking() {
+       _uiState.value = TrackingUiState(tracking = true)
 
-        trackingJob?.cancel()
-        trackingJob = viewModelScope.launch {
+       startTime = System.currentTimeMillis()
+       lastPoint = null
 
+       trackingJob?.cancel()
+       trackingJob = viewModelScope.launch {
 
-            if (useMockLocation) {
-                mockLocationFlow().collect { point ->
-                    handleNewPoint(point)
-                }
-            } else {
-                gpsRepository.startLocationUpdates { point ->
-                    handleNewPoint(point)
-                }
-            }
-        }
-    }
+           if (useMockLocation) {
+               mockLocationFlow().collect { handleNewPoint(it) }
+           } else {
+               gpsRepository.startLocationUpdates { point ->
+                   handleNewPoint(point)
+               }
+           }
+       }
+   }
 
     private fun handleNewPoint(point: LocationPoint) {
         val addedDistance = if (lastPoint != null) {
@@ -120,11 +118,12 @@ class TrackingViewModel(
         )
 
         viewModelScope.launch {
-            walkRepository.insertWalkWithPoints(
-                walk = walk,
-                points = points
-            )
+                walkRepository.insertWalkWithPoints(
+                    walk = walk,
+                    points = points
+                )
         }
+
 
         // Reset UI after saving
         _uiState.value = TrackingUiState()
@@ -147,9 +146,23 @@ class TrackingViewModel(
 
     // DISTANCE CALCULATION
 
+
     private fun calculateDistance(a: LocationPoint, b: LocationPoint): Float {
-        val result = FloatArray(1)
-        Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, result)
-        return result[0] / 1000f // meters → km
+        val r = 6371e3 // meters
+        val lat1 = Math.toRadians(a.latitude)
+        val lat2 = Math.toRadians(b.latitude)
+        val dLat = Math.toRadians(b.latitude - a.latitude)
+        val dLon = Math.toRadians(b.longitude - a.longitude)
+
+        val h = sin(dLat / 2).pow(2.0) +
+                cos(lat1) * cos(lat2) *
+                sin(dLon / 2).pow(2.0)
+
+        val c = 2 * atan2(sqrt(h), sqrt(1 - h))
+
+        return (r * c / 1000f).toFloat() // km
     }
+
 }
+
+

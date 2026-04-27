@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TrackingViewModelTest {
@@ -91,9 +92,11 @@ class TrackingViewModelTest {
         val p = LocationPoint(60.0, 24.0, time = 0L)
         fakeGps.emit(p)
 
-        advanceUntilIdle()
+        // 🔥 ADD THIS LINE
+        runCurrent()  // <-- forces state update immediately
 
         viewModel.stopTracking()
+
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -107,7 +110,6 @@ class TrackingViewModelTest {
         assertNotNull(fakeWalkRepo.savedWalk)
         assertEquals(1, fakeWalkRepo.savedPoints.size)
     }
-
     @Test
     fun `loadLastLocation updates currentLocation`() = runTest {
 
