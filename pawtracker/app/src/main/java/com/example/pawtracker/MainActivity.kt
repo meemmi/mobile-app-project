@@ -6,16 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.pawtracker.data.repository.GPSRepository
+import com.example.pawtracker.data.repository.GPSRepositoryImpl
 import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import com.example.pawtracker.ui.theme.PawTrackerTheme
-import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.data.repository.WalkRepository
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
@@ -24,11 +22,8 @@ import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.WalkRepositoryImpl
 import com.example.pawtracker.ui.history.HistoryViewModel
 import com.example.pawtracker.ui.navigation.NavGraph
-import com.example.pawtracker.ui.profile.ProfileScreen
 import com.example.pawtracker.ui.statistics.StatisticsViewModel
 import com.example.pawtracker.ui.profile.ProfileViewModel
-import com.example.pawtracker.ui.statistics.StatisticsScreen
-import androidx.compose.runtime.*
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,7 +41,7 @@ class MainActivity : ComponentActivity() {
             .build()
     }
 
-    private val gpsRepository by lazy { GPSRepository(this) }
+    private val gpsRepository by lazy { GPSRepositoryImpl(this) }
 
     private val walkRepository: WalkRepository by lazy { WalkRepositoryImpl(database.walkDao()) }
 

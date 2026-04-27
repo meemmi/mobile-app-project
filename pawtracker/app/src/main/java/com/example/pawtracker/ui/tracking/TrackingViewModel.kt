@@ -4,14 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.data.repository.WalkRepository
-import com.example.pawtracker.data.repository.GPSRepository
 import com.example.pawtracker.model.LocationPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import android.location.Location
-
+import com.example.pawtracker.data.repository.GPSRepository
 
 
 /**
@@ -23,7 +22,7 @@ import android.location.Location
 class TrackingViewModel(
     private val gpsRepository: GPSRepository,
     private val walkRepository: WalkRepository
-) : ViewModel() {
+) : ViewModel() {git add
 
     private val _uiState = MutableStateFlow(TrackingUiState())
     val uiState: StateFlow<TrackingUiState> = _uiState
@@ -114,7 +113,7 @@ class TrackingViewModel(
         val walk = WalkEntity(
             startTime = startTime,
             endTime = endTime,
-            distance = (_uiState.value.distance * 1000).toFloat(),
+            distance = (_uiState.value.distance * 1000),
             duration = endTime - startTime,
             pointCount = points.size,
             previewPolyline = null
