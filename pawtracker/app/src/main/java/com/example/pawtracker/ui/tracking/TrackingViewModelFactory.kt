@@ -3,6 +3,7 @@ package com.example.pawtracker.ui.tracking
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pawtracker.data.repository.GPSRepository
+import com.example.pawtracker.data.repository.GPSRepositoryImpl
 import com.example.pawtracker.data.repository.WalkRepository
 
 class TrackingViewModelFactory(

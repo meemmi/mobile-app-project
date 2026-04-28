@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pawtracker.R
 import com.example.pawtracker.data.local.AppDatabase
-import com.example.pawtracker.data.repository.GPSRepository
+import com.example.pawtracker.data.repository.GPSRepositoryImpl
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -27,19 +27,10 @@ import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 
 @Composable
-fun TrackingScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
-
-    val db = AppDatabase.getDatabase(context)
-
-    val gpsRepository = GPSRepository(context)
-    val walkRepository = WalkRepositoryImpl(db.walkDao())
-
-    // 3. Create ViewModel with factory
-    val viewModel: TrackingViewModel = viewModel(
-        factory = TrackingViewModelFactory(gpsRepository, walkRepository)
-    )
-
+fun TrackingScreen(
+    viewModel: TrackingViewModel,
+    innerPadding: PaddingValues
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     TrackingLayout(
@@ -47,9 +38,9 @@ fun TrackingScreen(innerPadding: PaddingValues) {
         onStart = { viewModel.startTracking() },
         onStop = { viewModel.stopTracking() },
         innerPadding = innerPadding
-
     )
 }
+
 
 /**
  * Layout: Map + stats + control buttons

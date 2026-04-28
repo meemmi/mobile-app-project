@@ -16,9 +16,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 // For testing
 @Composable
-fun StatisticsScreen(innerPadding: PaddingValues,
-
-                     viewModel: StatisticsViewModel = viewModel()
+fun StatisticsScreen(
+    viewModel: StatisticsViewModel,
+    innerPadding: PaddingValues
 ) {
     val state by viewModel.uiState.collectAsState()
 
