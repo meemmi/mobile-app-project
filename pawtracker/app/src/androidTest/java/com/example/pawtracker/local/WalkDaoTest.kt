@@ -53,9 +53,7 @@ class WalkDaoTest {
             previewPolyline = null
         )
 
-
         val id = walkDao.insertWalk(walk)
-
         val result = walkDao.getAllWalks().first()
 
         assertThat(result).hasSize(1)
