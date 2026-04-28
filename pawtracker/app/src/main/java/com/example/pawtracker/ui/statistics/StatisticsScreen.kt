@@ -18,13 +18,17 @@ import androidx.compose.ui.unit.dp
 // ---------------------- SCREEN ----------------------
 
 @Composable
-fun StatisticsScreen(viewModel: StatisticsViewModel) {
+fun StatisticsScreen(
+    viewModel: StatisticsViewModel,
+    innerPadding: PaddingValues) {
 
     val state by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
