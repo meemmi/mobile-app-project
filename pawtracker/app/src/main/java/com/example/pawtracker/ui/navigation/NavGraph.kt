@@ -10,11 +10,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.pawtracker.PawTrackerApplication
 import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import com.example.pawtracker.ui.editprofile.EditProfileScreen
 import com.example.pawtracker.ui.editprofile.EditProfileViewModel
 import com.example.pawtracker.ui.editprofile.EditProfileViewModelFactory
 import com.example.pawtracker.ui.history.HistoryScreen
+import com.example.pawtracker.ui.history.HistoryViewModel
 import com.example.pawtracker.ui.main.MainScreen
 import com.example.pawtracker.ui.main.MainViewModel
 import com.example.pawtracker.ui.profile.ProfileScreen
@@ -23,15 +25,19 @@ import com.example.pawtracker.ui.profile.ProfileViewModelFactory
 import com.example.pawtracker.ui.statistics.StatisticsScreen
 import com.example.pawtracker.ui.statistics.StatisticsViewModel
 import com.example.pawtracker.ui.tracking.TrackingScreen
+import com.example.pawtracker.ui.tracking.TrackingViewModel
+import com.example.pawtracker.utils.ViewModelFactory
 
 @Composable
-fun NavGraph(navController: NavHostController,
-             isDarkTheme: Boolean,
-             onToggleTheme: () -> Unit,
-             innerPadding: PaddingValues,
-             viewModel: MainViewModel,
-             statisticsViewModel: StatisticsViewModel,
-             dogProfileRepository: DogProfileRepositoryImpl
+fun NavGraph(
+    navController: NavHostController,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit,
+    innerPadding: PaddingValues,
+    viewModel: MainViewModel,
+    app: PawTrackerApplication
+  //  statisticsViewModel: StatisticsViewModel,
+  //  dogProfileRepository: DogProfileRepositoryImpl
 ) {
     val hasCompletedOnboarding = viewModel.hasCompletedOnboarding
 
@@ -41,22 +47,93 @@ fun NavGraph(navController: NavHostController,
         }
         return
     }
+
     val startDest = if (hasCompletedOnboarding) Screen.Statistics.route else Screen.Main.route
 
     NavHost(
         navController = navController,
         startDestination = startDest
     ) {
-        composable(Screen.Main.route) {MainScreen( viewModel = viewModel, onContinueClick = {
-            viewModel.completeOnboarding() // Save onboarding status
-            navController.navigate(Screen.Statistics.route) { // Navgates to statisticsScreen
-                popUpTo(Screen.Main.route) { inclusive = true }
-            }
-        },
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme,
-            innerPadding = innerPadding) }
-        composable(Screen.Statistics.route) {StatisticsScreen(innerPadding = innerPadding, viewModel = statisticsViewModel)}
+        // 1. Main screen / Onboarding screen
+        composable(Screen.Main.route) {
+            MainScreen(
+                viewModel = viewModel,
+                onContinueClick = {
+                    viewModel.completeOnboarding() // Save onboarding status
+                    navController.navigate(Screen.Statistics.route) { // Navgates to statisticsScreen
+                        popUpTo(Screen.Main.route) { inclusive = true }
+                    }
+                },
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
+                innerPadding = innerPadding
+            )
+        }
+
+        // 2. Statistics screen
+        composable(Screen.Statistics.route) {
+            val statsVm: StatisticsViewModel = viewModel(
+                factory = ViewModelFactory {
+                    StatisticsViewModel(app.walkRepository, app.dogProfileRepository)
+                }
+            )
+            StatisticsScreen(innerPadding = innerPadding, viewModel = statsVm)
+        }
+
+        // 3. Tracking screen
+        composable(Screen.Tracking.route) {
+            val trackingVm: TrackingViewModel = viewModel(
+                factory = ViewModelFactory {
+                    TrackingViewModel(app.gpsRepository, app.walkRepository)
+                }
+            )
+            TrackingScreen(innerPadding = innerPadding, viewModel = trackingVm)
+        }
+
+        // 4. History screen
+        composable(Screen.History.route) {
+            val historyVm: HistoryViewModel = viewModel(
+                factory = ViewModelFactory {
+                    HistoryViewModel(app.walkRepository)
+                }
+            )
+            HistoryScreen(innerPadding = innerPadding, viewModel = historyVm)
+        }
+
+        // 5. Profile screen
+        composable(Screen.Profile.route) {
+            val profileVm: ProfileViewModel = viewModel(
+                factory = ViewModelFactory {
+                    ProfileViewModel(app.dogProfileRepository)
+                }
+            )
+            ProfileScreen(
+                innerPadding = innerPadding,
+                viewModel = profileVm,
+                onNavigateToEdit = { navController.navigate(Screen.EditProfile.route) }
+            )
+        }
+
+        // 6. EditProfileScreen
+        composable(Screen.EditProfile.route) {
+            val editVm: EditProfileViewModel = viewModel(
+                factory = ViewModelFactory {
+                    EditProfileViewModel(app.dogProfileRepository)
+                }
+            )
+            EditProfileScreen(
+                viewModel = editVm,
+                onNavigateBack = { navController.popBackStack() },
+                innerPadding = innerPadding
+            )
+        }
+
+
+        /*
+        // 2. Statistics Screen
+        composable(Screen.Statistics.route) {
+            StatisticsScreen(innerPadding = innerPadding, viewModel = statisticsViewModel)}
+
         composable(Screen.Tracking.route) {TrackingScreen(innerPadding) }
         composable(Screen.History.route) {HistoryScreen(innerPadding) }
 
@@ -71,6 +148,8 @@ fun NavGraph(navController: NavHostController,
             )
         }
 
+ */
+        /*
         // MUOKKAUSNÄKYMÄ
         composable(Screen.EditProfile.route) {
             val editViewModel: EditProfileViewModel = viewModel(
@@ -83,4 +162,23 @@ fun NavGraph(navController: NavHostController,
         }
     }
 }
+*/
+
+// MUOKKAUSNÄKYMÄ
+        composable(Screen.EditProfile.route) {
+            val editViewModel: EditProfileViewModel = viewModel(
+                factory = ViewModelFactory {
+                    EditProfileViewModel(app.dogProfileRepository)
+                }
+            )
+
+            EditProfileScreen(
+                viewModel = editViewModel,
+                onNavigateBack = { navController.popBackStack() },
+                innerPadding = innerPadding
+            )
+        }
+    }
+}
+
 
