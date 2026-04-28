@@ -12,6 +12,7 @@ import com.example.pawtracker.ui.theme.PawTrackerTheme
 import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.data.repository.WalkRepository
+import com.example.pawtracker.ui.editprofile.EditProfileViewModel
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +63,8 @@ class MainActivity : ComponentActivity() {
 
     private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
 
+    private val editProfileViewModel by lazy { EditProfileViewModel(dogProfileRepository) }
+
     private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
 
     private val requestPermissionLauncher =
@@ -98,7 +101,8 @@ class MainActivity : ComponentActivity() {
                         onToggleTheme = {isDarkTheme = !isDarkTheme },
                         innerPadding = innerPadding,
                         viewModel = mainViewModel,
-                        statisticsViewModel = statisticsViewModel
+                        statisticsViewModel = statisticsViewModel,
+                        dogProfileRepository = dogProfileRepository
                     )
                 }
             }

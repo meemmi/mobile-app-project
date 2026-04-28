@@ -103,7 +103,7 @@ fun MainScreen(
 
                 )
 
-                Spacer(modifier = Modifier.height(470.dp))
+               // Spacer(modifier = Modifier.height(470.dp))
 
                 Button(
                     onClick = onContinueClick,
