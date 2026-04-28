@@ -45,21 +45,22 @@ class MainActivity : ComponentActivity() {
 
     private val walkRepository: WalkRepository by lazy { WalkRepositoryImpl(database.walkDao()) }
 
-    private val dogProfileRepository by lazy { DogProfileRepositoryImpl(database.dogProfileDao())}
+    private val dogProfileRepository by lazy { DogProfileRepositoryImpl(database.dogProfileDao()) }
 
-    private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
+    // private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
 
-    private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
+    // private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
 
-    private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
+    //private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
 
-    private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
+    //private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
 
     // Permission launcher must be inside class
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             // You can show a message if needed
         }
+
     private fun requestLocationPermission() {
         requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
@@ -83,8 +84,12 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navController,
                         isDarkTheme = isDarkTheme,
-                        onToggleTheme = {isDarkTheme = !isDarkTheme },
-                        innerPadding = innerPadding
+                        onToggleTheme = { isDarkTheme = !isDarkTheme },
+                        innerPadding = innerPadding,
+                        gpsRepository = gpsRepository,
+                        walkRepository = walkRepository,
+                        dogProfileRepository = dogProfileRepository
+
                     )
                 }
             }

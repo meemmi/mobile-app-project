@@ -28,17 +28,10 @@ import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 @Composable
-fun HistoryScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
-
-    val repository = remember {
-        val db = AppDatabase.getDatabase(context)
-        WalkRepositoryImpl(db.walkDao())
-    }
-
-    val viewModel: HistoryViewModel = viewModel(
-        factory = HistoryViewModelFactory(repository)
-    )
+fun HistoryScreen(
+    viewModel: HistoryViewModel,
+    innerPadding: PaddingValues
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()

@@ -1,60 +1,33 @@
 package com.example.pawtracker.ui.profile
 
-// Compose core
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 
-// Layout
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-
-// Shapes & drawing
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
-
-// Material 3
 import androidx.compose.material3.*
 
-// Icons
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Cake
-import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.MonitorWeight
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-
-// Navigation padding
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.example.pawtracker.R
-import com.example.pawtracker.data.local.AppDatabase
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 
 @Composable
-fun ProfileScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
-
-    val repository = remember {
-        val db = AppDatabase.getDatabase(context)
-        DogProfileRepositoryImpl(db.dogProfileDao())
-    }
-
-    val viewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModelFactory(repository)
-    )
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    innerPadding: PaddingValues
+) {
     val state by viewModel.uiState.collectAsState()
 
     Column(

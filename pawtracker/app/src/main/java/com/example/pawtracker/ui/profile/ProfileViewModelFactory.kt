@@ -2,10 +2,11 @@ package com.example.pawtracker.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
+import com.example.pawtracker.data.repository.DogProfileRepository
+
 
 class ProfileViewModelFactory(
-    private val repository: DogProfileRepositoryImpl
+    private val repository: DogProfileRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

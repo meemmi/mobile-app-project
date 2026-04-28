@@ -10,7 +10,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.example.pawtracker.data.repository.GPSRepository
+
 import kotlin.math.*
+
 
 
 
@@ -56,7 +58,7 @@ class TrackingViewModel(
     }
 
 
-   fun startTracking() {
+    fun startTracking() {
        _uiState.value = TrackingUiState(tracking = true)
 
        startTime = System.currentTimeMillis()

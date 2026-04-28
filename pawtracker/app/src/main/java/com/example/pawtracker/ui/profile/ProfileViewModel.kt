@@ -2,7 +2,7 @@ package com.example.pawtracker.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.DogProfileEntity
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
+import com.example.pawtracker.data.repository.DogProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 
 class ProfileViewModel(
-    private val repository: DogProfileRepositoryImpl
+    private val repository: DogProfileRepository
 ) : ViewModel() {
 
     // Constant stream of profile data from the database to keep the UI screens synced
