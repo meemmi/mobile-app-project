@@ -44,18 +44,13 @@ import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 
 @Composable
-fun ProfileScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
+fun ProfileScreen(
+    innerPadding: PaddingValues,
+    viewModel: ProfileViewModel,
+    onNavigateToEdit: () -> Unit
+) {
 
-    val repository = remember {
-        val db = AppDatabase.getDatabase(context)
-        DogProfileRepositoryImpl(db.dogProfileDao())
-    }
-
-    val viewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModelFactory(repository)
-    )
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.dogProfile.collectAsState()
 
     Column(
         modifier = Modifier
@@ -70,14 +65,14 @@ fun ProfileScreen(innerPadding: PaddingValues) {
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileHeader(
-            imageUri = state.imageUri,
-            name = state.name
+            imageUri = state?.imageUri ?: "",
+            name = state?.name ?: "Dog"
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileInfoCard(
-            breed = state.breed,
+            breed = state?.breed ?: "",
             age = "4 years old",
             height = "23–24 inches (male)",
             weight = "65–75 pounds"
@@ -86,14 +81,14 @@ fun ProfileScreen(innerPadding: PaddingValues) {
         Spacer(modifier = Modifier.height(20.dp))
 
         DailyGoalCard(
-            minutes = state.dailyDurationGoal,
-            distance = state.dailyDistanceGoal
+            minutes = state?.dailyDurationGoal?.toString() ?: "0",
+            distance = state?.dailyDistanceGoal?.toString() ?: "0.0"
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = {},
+            onClick = onNavigateToEdit,
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier
                 .fillMaxWidth()
