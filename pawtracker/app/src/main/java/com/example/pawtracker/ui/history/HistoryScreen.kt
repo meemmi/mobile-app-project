@@ -25,22 +25,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 @Composable
-fun HistoryScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
-
-    val repository = remember {
-        val db = AppDatabase.getDatabase(context)
-        WalkRepositoryImpl(db.walkDao())
-    }
-
-    val viewModel: HistoryViewModel = viewModel(
-        factory = HistoryViewModelFactory(repository)
-    )
-    val uiState by viewModel.uiState.collectAsState()
+fun HistoryScreen(
+    innerPadding: PaddingValues,
+    viewModel: HistoryViewModel
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier
         .fillMaxSize()

@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
 import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
@@ -50,7 +51,7 @@ fun ProfileScreen(
     onNavigateToEdit: () -> Unit
 ) {
 
-    val state by viewModel.dogProfile.collectAsState()
+    val state by viewModel.dogProfile.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
