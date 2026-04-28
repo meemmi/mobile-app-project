@@ -19,30 +19,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.material3.*
 
 // Icons
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Cake
-import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.MonitorWeight
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 
 // Navigation padding
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
-import com.example.pawtracker.data.local.AppDatabase
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
+
 
 @Composable
 fun ProfileScreen(
@@ -74,9 +64,9 @@ fun ProfileScreen(
 
         ProfileInfoCard(
             breed = state?.breed ?: "",
-            age = "4 years old",
-            height = "23–24 inches (male)",
-            weight = "65–75 pounds"
+            age = if (!state?.age.isNullOrEmpty()) "${state?.age} years old" else "-",
+            height = if (!state?.height.isNullOrEmpty()) "${state?.height} cm" else "-",
+            weight = if (!state?.weight.isNullOrEmpty()) "${state?.weight} kg" else "-"
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -169,7 +159,7 @@ fun ProfileInfoCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-
+            InfoRow(R.drawable.dog_icon, breed)
             InfoRow(R.drawable.dog_age, age)
             InfoRow(R.drawable.dog_height, height)
             InfoRow(R.drawable.dog_weight, weight)

@@ -42,6 +42,9 @@ class EditProfileViewModel(
                     it.copy(
                         name = dogProfile.name,
                         breed = dogProfile.breed,
+                        age = dogProfile.age,
+                        height = dogProfile.height,
+                        weight = dogProfile.weight,
                         dailyDistanceGoal = dogProfile.dailyDistanceGoal.toString(),
                         dailyDurationGoal = dogProfile.dailyDurationGoal.toString(),
                         weeklyDistanceGoal = dogProfile.weeklyDistanceGoal.toString(),
@@ -55,10 +58,18 @@ class EditProfileViewModel(
 
     // Updates functions to sync text field changes with the temporary UI state
     fun onNameChange(value: String) = _uiState.update { it.copy(name = value) }
+
+    fun onAgeChange(value: String) = _uiState.update { it.copy(age = value) }
     fun onBreedChange(value: String) = _uiState.update { it.copy(breed = value) }
+
+    fun onHeightChange(value: String) = _uiState.update { it.copy(height = value) }
+
+    fun onWeightChange(value: String) = _uiState.update { it.copy(weight = value) }
     fun onDailyDistanceChange(value: String) = _uiState.update { it.copy(dailyDistanceGoal = value) }
     fun onDailyDurationChange(value: String) = _uiState.update { it.copy(dailyDurationGoal = value) }
+
     fun onWeeklyDistanceChange(value: String) = _uiState.update { it.copy(weeklyDistanceGoal = value) }
+
     fun onWeeklyDurationChange(value: String) = _uiState.update { it.copy(weeklyDurationGoal = value) }
 
 
@@ -69,9 +80,12 @@ class EditProfileViewModel(
 
             val entity = DogProfileEntity(
                 id = 0,
-                imageUri = "testImage",
+                imageUri = state.imageUri,
                 name = state.name,
                 breed = state.breed,
+                age = state.age,
+                height = state.height,
+                weight = state.weight,
                 // Converts String inputs to correct numeric types defaulting to 0 if invalid
                 dailyDistanceGoal = state.dailyDistanceGoal.toFloatOrNull() ?: 0.0f,
                 dailyDurationGoal = state.dailyDurationGoal.toLongOrNull() ?: 0L,
