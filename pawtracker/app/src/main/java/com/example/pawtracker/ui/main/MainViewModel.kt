@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.preferences.PreferenceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,11 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = PreferenceRepository(application)
-
-    private val _uiState = MutableStateFlow(MainUiState())
+class MainViewModel(private val repository: PreferenceRepository) : ViewModel() {
+ private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState
 
     var hasCompletedOnboarding by mutableStateOf<Boolean?>(null)
@@ -24,9 +22,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            repository.onboardingCompleted.collect { value ->
-                hasCompletedOnboarding = value
-            }
+            repository.onboardingCompleted.collect { hasCompletedOnboarding = it }
         }
     }
 

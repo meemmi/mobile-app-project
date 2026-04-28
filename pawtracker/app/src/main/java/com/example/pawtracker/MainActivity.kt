@@ -37,35 +37,10 @@ import com.example.pawtracker.ui.components.NavBar
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pawtracker.ui.main.MainViewModel
+import com.example.pawtracker.utils.ViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
-
-    private val database by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "walk_db"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-
-    private val gpsRepository by lazy { GPSRepository(this) }
-
-    private val walkRepository: WalkRepository by lazy { WalkRepositoryImpl(database.walkDao()) }
-
-    private val dogProfileRepository by lazy { DogProfileRepositoryImpl(database.dogProfileDao())}
-
-    private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
-
-    private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
-
-    private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
-
-    private val editProfileViewModel by lazy { EditProfileViewModel(dogProfileRepository) }
-
-    private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -77,14 +52,20 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val app = application as PawTrackerApplication
+
+
         // Ask for permission
         requestLocationPermission()
         enableEdgeToEdge()
+
         setContent {
 
             val mainViewModel: MainViewModel = viewModel(
-                factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+                factory = ViewModelFactory { MainViewModel(app.preferenceRepository) }
             )
+
             val systemDark = isSystemInDarkTheme()
             var isDarkTheme by rememberSaveable { mutableStateOf(systemDark) }
 
@@ -94,15 +75,13 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = { NavBar(navController, has_completed_onboarding = mainViewModel.hasCompletedOnboarding ?: false) }
                 ) { innerPadding ->
-
                     NavGraph(
                         navController = navController,
                         isDarkTheme = isDarkTheme,
                         onToggleTheme = {isDarkTheme = !isDarkTheme },
                         innerPadding = innerPadding,
                         viewModel = mainViewModel,
-                        statisticsViewModel = statisticsViewModel,
-                        dogProfileRepository = dogProfileRepository
+                        app = app
                     )
                 }
             }
