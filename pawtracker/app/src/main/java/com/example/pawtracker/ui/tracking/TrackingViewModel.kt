@@ -32,7 +32,7 @@ class TrackingViewModel(
 
     //a reference to the coroutine that is collecting GPS updates:trackingjob
     private var trackingJob: Job? = null
-    private var useMockLocation = true
+    private var useMockLocation = false
     private var startTime: Long = 0L
     private var lastPoint: LocationPoint? = null
 
@@ -68,7 +68,8 @@ class TrackingViewModel(
        trackingJob = viewModelScope.launch {
 
            if (useMockLocation) {
-               mockLocationFlow().collect { handleNewPoint(it) }
+               mockLocationFlow().collect {  point ->
+                   handleNewPoint(point) }
            } else {
                gpsRepository.startLocationUpdates { point ->
                    handleNewPoint(point)
@@ -78,10 +79,26 @@ class TrackingViewModel(
    }
 
     private fun handleNewPoint(point: LocationPoint) {
+
+        if (lastPoint != null) {
+
+            val distanceKm = calculateDistance(lastPoint!!, point)
+            val timeDiffMs = point.time - lastPoint!!.time
+
+            val timeDiffSec = if (timeDiffMs <= 0) 1.0 else timeDiffMs / 1000.0
+
+            val speed = distanceKm / (timeDiffSec / 3600.0) // km/h
+            // dog cannot go > 20 km/h
+            // Ignore impossible speeds
+            if (speed > 25) return
+
+            // Ignore tiny GPS noise (< 1 meter)
+            if (distanceKm < 0.001) return
+        }
+
         val addedDistance = if (lastPoint != null) {
             calculateDistance(lastPoint!!, point)
-        } else 0f
-
+        } else 0.0
         lastPoint = point
         val elapsedTime = System.currentTimeMillis() - startTime
 
@@ -113,7 +130,7 @@ class TrackingViewModel(
         val walk = WalkEntity(
             startTime = startTime,
             endTime = endTime,
-            distance = (_uiState.value.distance * 1000),
+            distance = (_uiState.value.distance * 1000).toFloat(),
             duration = endTime - startTime,
             pointCount = points.size,
             previewPolyline = null
@@ -149,7 +166,7 @@ class TrackingViewModel(
     // DISTANCE CALCULATION
 
 
-    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Float {
+    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Double {
         val r = 6371e3 // meters
         val lat1 = Math.toRadians(a.latitude)
         val lat2 = Math.toRadians(b.latitude)
@@ -162,8 +179,9 @@ class TrackingViewModel(
 
         val c = 2 * atan2(sqrt(h), sqrt(1 - h))
 
-        return (r * c / 1000f).toFloat() // km
+        return (r * c) / 1000.0 // km
     }
+
 
 }
 

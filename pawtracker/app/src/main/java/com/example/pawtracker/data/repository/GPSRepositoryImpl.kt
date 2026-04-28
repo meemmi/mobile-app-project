@@ -38,10 +38,10 @@ class GPSRepositoryImpl(
     fun setupLocationRequest() {
         locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            60_000L // 60 seconds
+            1000L // 1 second
         )
-            .setMinUpdateIntervalMillis(30_000L)
-            .setMaxUpdateDelayMillis(120_000L)
+            .setMinUpdateIntervalMillis(500L)
+            .setMaxUpdateDelayMillis(2000L)
             .build()
     }
     @RequiresPermission(anyOf = [
