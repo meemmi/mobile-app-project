@@ -21,7 +21,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun StatisticsScreen(
     viewModel: StatisticsViewModel,
-    innerPadding: PaddingValues) {
+    innerPadding: PaddingValues,
+    onStartWalkClick: () -> Unit
+    ) {
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -76,7 +78,7 @@ fun StatisticsScreen(
 
         // Start Walk button
         Button(
-            onClick = { /* TODO: navigate to tracking */ },
+            onClick = { onStartWalkClick() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Start Walk")

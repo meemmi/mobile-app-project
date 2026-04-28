@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -73,7 +74,17 @@ fun NavGraph(
                     StatisticsViewModel(app.walkRepository, app.dogProfileRepository)
                 }
             )
-            StatisticsScreen(innerPadding = innerPadding, viewModel = statsVm)
+            StatisticsScreen(
+                innerPadding = innerPadding,
+                viewModel = statsVm,
+                onStartWalkClick = {navController.navigate(Screen.Tracking.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                } }
+            )
         }
 
         // 3. Tracking screen
