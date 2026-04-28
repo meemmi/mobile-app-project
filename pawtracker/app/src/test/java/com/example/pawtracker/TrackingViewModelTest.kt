@@ -46,14 +46,15 @@ class TrackingViewModelTest {
     @Test
     fun `startTracking sets tracking true and resets state`() = runTest {
 
-        viewModel.startTracking()
-        advanceUntilIdle()
-
         viewModel.uiState.test {
+            viewModel.startTracking()
+            advanceUntilIdle()
+            skipItems(1)
             val state = awaitItem()
 
             assertTrue(state.tracking)
-            assertEquals(0f, state.distance)
+            assertEquals(0.0, state.distance, 0.0)
+
             assertEquals(0L, state.time)
             assertTrue(state.points.isEmpty())
         }
@@ -67,43 +68,51 @@ class TrackingViewModelTest {
         advanceUntilIdle()
 
         // Emit first point
-        val p1 = LocationPoint(60.0, 24.0, time = 0L)
+        val p1 = LocationPoint(60.0, 24.0, time = 1000L)
         fakeGps.emit(p1)
+        runCurrent()
 
         // Emit second point
-        val p2 = LocationPoint(60.0005, 24.0005, time = 1000L)
-        fakeGps.emit(p2)
+        val p2 = LocationPoint(60.00005, 24.00005, time = 2000L)
 
-        advanceUntilIdle()
+        fakeGps.emit(p2)
+        runCurrent()
+
+        //advanceUntilIdle()
 
         val state = viewModel.uiState.value
 
         assertEquals(2, state.points.size)
         assertEquals(p2, state.currentLocation)
-        assertTrue(state.distance > 0f)
+        assertTrue(state.distance > 0.0)
+
     }
 
     @Test
     fun `stopTracking saves walk and resets UI`() = runTest {
-
         viewModel.setUseMockLocation(false)
         viewModel.startTracking()
+        assertTrue(fakeGps.started)
 
-        val p = LocationPoint(60.0, 24.0, time = 0L)
+        val p = LocationPoint(60.0, 24.0, time = 1000L)
         fakeGps.emit(p)
 
-        // 🔥 ADD THIS LINE
-        runCurrent()  // <-- forces state update immediately
+        advanceUntilIdle()
+
+        //check debug
+        val pointsBeforeStop = viewModel.uiState.value.points.size
+        assertTrue(pointsBeforeStop >= 1)
 
         viewModel.stopTracking()
-
         advanceUntilIdle()
+
 
         val state = viewModel.uiState.value
 
         // UI reset
         assertFalse(state.tracking)
-        assertEquals(0f, state.distance)
+        assertEquals(0.0, state.distance, 0.0)
+
         assertEquals(0, state.points.size)
 
         // Walk saved

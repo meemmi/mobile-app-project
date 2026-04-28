@@ -59,24 +59,26 @@ class TrackingViewModel(
 
 
     fun startTracking() {
-       _uiState.value = TrackingUiState(tracking = true)
+        _uiState.value = TrackingUiState(tracking = true)
 
-       startTime = System.currentTimeMillis()
-       lastPoint = null
+        startTime = System.currentTimeMillis()
+        lastPoint = null
 
-       trackingJob?.cancel()
-       trackingJob = viewModelScope.launch {
+        trackingJob?.cancel()
+        trackingJob = viewModelScope.launch {
 
-           if (useMockLocation) {
-               mockLocationFlow().collect {  point ->
-                   handleNewPoint(point) }
-           } else {
-               gpsRepository.startLocationUpdates { point ->
-                   handleNewPoint(point)
-               }
-           }
-       }
-   }
+            if (useMockLocation) {
+                mockLocationFlow().collect { point ->
+                    handleNewPoint(point)
+                }
+            } else {
+                gpsRepository.startLocationUpdates { point ->
+                    handleNewPoint(point)
+                    }
+
+            }
+        }
+    }
 
     private fun handleNewPoint(point: LocationPoint) {
 
