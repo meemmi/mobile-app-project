@@ -3,17 +3,16 @@ package com.example.pawtracker.ui.tracking
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.SearchBarDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pawtracker.R
-import com.example.pawtracker.data.local.AppDatabase
-import com.example.pawtracker.data.repository.GPSRepositoryImpl
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -23,7 +22,6 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 
 @Composable
@@ -168,7 +166,10 @@ fun TrackingStatistics(
                 .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("%.2f km".format(uiState.distance), style = MaterialTheme.typography.headlineMedium)
+            Text("%.2f km".format(uiState.distance),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.testTag("distance_text")
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -180,7 +181,10 @@ fun TrackingStatistics(
                 .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(formattedTime, style = MaterialTheme.typography.headlineMedium)
+            Text(formattedTime,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.testTag("time_text")
+            )
         }
     }
 }
@@ -202,7 +206,9 @@ fun ControlButtons(
         Button(
             onClick = onStart,
             enabled = !tracking,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("start_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(stringResource(R.string.tracking_start))
@@ -213,7 +219,9 @@ fun ControlButtons(
         Button(
             onClick = onStop,
             enabled = tracking,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("stop_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(stringResource(R.string.tracking_stop))
