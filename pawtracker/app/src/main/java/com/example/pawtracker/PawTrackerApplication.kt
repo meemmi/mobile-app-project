@@ -8,6 +8,7 @@ import com.example.pawtracker.data.repository.GPSRepository
 import com.example.pawtracker.data.repository.WalkRepository
 import com.example.pawtracker.data.repository.WalkRepositoryImpl
 import com.example.pawtracker.data.local.preferences.PreferenceRepository
+import com.example.pawtracker.data.repository.GPSRepositoryImpl
 
 class PawTrackerApplication : Application() {
     private val database by lazy {
@@ -20,7 +21,8 @@ class PawTrackerApplication : Application() {
             .build()
     }
 
-    val gpsRepository by lazy { GPSRepository(applicationContext) }
+    val gpsRepository by lazy { GPSRepositoryImpl(applicationContext) }
+
 
     val walkRepository: WalkRepository by lazy {
         WalkRepositoryImpl(database.walkDao())

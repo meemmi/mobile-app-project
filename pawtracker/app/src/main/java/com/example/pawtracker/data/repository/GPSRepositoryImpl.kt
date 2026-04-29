@@ -1,27 +1,19 @@
 package com.example.pawtracker.data.repository
 
-
-import com.example.pawtracker.model.LocationPoint
-
-interface GPSRepository {
-    fun startLocationUpdates(onUpate: (LocationPoint) -> Unit)
-    fun stopLocationUpdates()
-    fun getLastLocation(onResult: (LocationPoint?) -> Unit)
-
-}
-
-/*
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import com.example.pawtracker.model.LocationPoint
 import com.google.android.gms.location.*
+import android.Manifest
 
-class GPSRepository(
+
+class GPSRepositoryImpl(
     private val context: Context
-) {
+) : GPSRepository {
 
     private val fusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
@@ -32,12 +24,12 @@ class GPSRepository(
     private fun hasLocationPermission(): Boolean {
         val fine = ActivityCompat.checkSelfPermission(
             context,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
         val coarse = ActivityCompat.checkSelfPermission(
             context,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
         return fine || coarse
@@ -46,14 +38,17 @@ class GPSRepository(
     fun setupLocationRequest() {
         locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            1000L // 60 seconds
+            1000L // 1 second
         )
             .setMinUpdateIntervalMillis(500L)
             .setMaxUpdateDelayMillis(2000L)
             .build()
     }
-
-    fun startLocationUpdates(onUpdate: (LocationPoint) -> Unit) {
+    @RequiresPermission(anyOf = [
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ])
+    override fun startLocationUpdates(onUpdate: (LocationPoint) -> Unit) {
 
         if (!hasLocationPermission()) return
 
@@ -63,7 +58,7 @@ class GPSRepository(
             override fun onLocationResult(locationResult: LocationResult) {
                 val loc: Location = locationResult.lastLocation ?: return
                 onUpdate(
-                    com.example.pawtracker.model.LocationPoint(
+                    LocationPoint(
                         latitude = loc.latitude,
                         longitude = loc.longitude,
                         time = loc.time
@@ -79,13 +74,16 @@ class GPSRepository(
         )
     }
 
-    fun stopLocationUpdates() {
+    override fun stopLocationUpdates() {
         if (::locationCallback.isInitialized) {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         }
     }
-
-    fun getLastLocation(onResult: (LocationPoint?) -> Unit) {
+    @RequiresPermission(anyOf = [
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ])
+    override fun getLastLocation(onResult: (LocationPoint?) -> Unit) {
 
         if (!hasLocationPermission()) {
             onResult(null)
@@ -106,11 +104,8 @@ class GPSRepository(
                     )
                 }
             }
-            .addOnFailureListener { e ->
-                // optional: handle error
+            .addOnFailureListener {
                 onResult(null)
             }
     }
 }
-
- */
