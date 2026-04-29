@@ -22,6 +22,9 @@
       <SelectionState runConfigName="startButton_enabled_stopButton_disabled_initially()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="ProfileScreenTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

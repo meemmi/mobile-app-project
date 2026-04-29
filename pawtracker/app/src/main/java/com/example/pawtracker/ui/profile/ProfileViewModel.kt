@@ -3,6 +3,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.DogProfileEntity
 import com.example.pawtracker.data.repository.DogProfileRepository
+import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
-class ProfileViewModel(
+open class ProfileViewModel(
     private val repository: DogProfileRepository
 ) : ViewModel() {
 
@@ -52,33 +53,4 @@ class ProfileViewModel(
         }
     }
 
-    // Updates functions to sync text field changes with the temporary UI state
-    fun onNameChange(value: String) = _uiState.update { it.copy(name = value) }
-    fun onBreedChange(value: String) = _uiState.update { it.copy(breed = value) }
-    fun onDailyDistanceChange(value: String) = _uiState.update { it.copy(dailyDistanceGoal = value) }
-    fun onDailyDurationChange(value: String) = _uiState.update { it.copy(dailyDurationGoal = value) }
-    fun onWeeklyDistanceChange(value: String) = _uiState.update { it.copy(weeklyDistanceGoal = value) }
-    fun onWeeklyDurationChange(value: String) = _uiState.update { it.copy(weeklyDurationGoal = value) }
-
-
-    // Converts the temporary state back to an entity and saves it to the database
-    fun save() {
-        viewModelScope.launch {
-            val state = _uiState.value
-
-            val entity = DogProfileEntity(
-                id = 0,
-                imageUri = "testImage",
-                name = state.name,
-                breed = state.breed,
-                // Converts String inputs to correct numeric types defaulting to 0 if invalid
-                dailyDistanceGoal = state.dailyDistanceGoal.toFloatOrNull() ?: 0f,
-                dailyDurationGoal = state.dailyDurationGoal.toLongOrNull() ?: 0L,
-                weeklyDistanceGoal = state.weeklyDistanceGoal.toFloatOrNull() ?: 0f,
-                weeklyDurationGoal = state.weeklyDurationGoal.toLongOrNull() ?: 0L
-            )
-
-            repository.saveProfile(entity)
-        }
-    }
 }

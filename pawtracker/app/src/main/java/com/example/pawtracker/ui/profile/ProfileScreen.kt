@@ -1,40 +1,56 @@
 package com.example.pawtracker.ui.profile
 
+// Compose core
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 
+// Layout
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+
+// Shapes & drawing
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+
+// Material 3
 import androidx.compose.material3.*
 
+// Icons
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberAsyncImagePainter
+
+// Navigation padding
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SearchBarDefaults.colors
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
+import androidx.compose.ui.platform.testTag
+
 
 @Composable
 fun ProfileScreen(
+    innerPadding: PaddingValues,
     viewModel: ProfileViewModel,
-    innerPadding: PaddingValues
+    onNavigateToEdit: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
+
+    val state by viewModel.dogProfile.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer) // Figma background
             .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -42,34 +58,35 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileHeader(
-            imageUri = state.imageUri,
-            name = state.name
+            imageUri = state?.imageUri ?: "",
+            name = state?.name ?: "Dog"
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileInfoCard(
-            breed = state.breed,
-            age = "4 years old",
-            height = "23–24 inches (male)",
-            weight = "65–75 pounds"
+            breed = state?.breed ?: "",
+            age = if (!state?.age.isNullOrEmpty()) "${state?.age} years old" else "-",
+            height = if (!state?.height.isNullOrEmpty()) "${state?.height} cm" else "-",
+            weight = if (!state?.weight.isNullOrEmpty()) "${state?.weight} kg" else "-"
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         DailyGoalCard(
-            minutes = state.dailyDurationGoal,
-            distance = state.dailyDistanceGoal
+            minutes = state?.dailyDurationGoal?.toString() ?: "0",
+            distance = state?.dailyDistanceGoal?.toString() ?: "0.0"
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = {},
+            onClick = onNavigateToEdit,
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
+                .height(52.dp)
+               .testTag("edit_button"),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
@@ -126,7 +143,8 @@ fun ProfileHeader(
             text = if (name.isNotEmpty()) name else "Your Dog",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.testTag("profile_name")
         )
     }
 }
@@ -145,7 +163,7 @@ fun ProfileInfoCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-
+            InfoRow(R.drawable.dog_icon, breed)
             InfoRow(R.drawable.dog_age, age)
             InfoRow(R.drawable.dog_height, height)
             InfoRow(R.drawable.dog_weight, weight)
@@ -153,7 +171,7 @@ fun ProfileInfoCard(
     }
 }
 @Composable
-fun InfoRow(iconRes: Int, text: String) {
+fun InfoRow(iconRes: Int, text: String,  modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,7 +191,8 @@ fun InfoRow(iconRes: Int, text: String) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.testTag("info_$text")
         )
     }
 }
@@ -210,20 +229,22 @@ fun DailyGoalCard(
 
                 GoalItem(
                     value = "$minutes min",
-                    label = "Duration"
+                    label = "Duration",
+                    modifier = Modifier.testTag("goal_minutes")
                 )
 
                 GoalItem(
                     value = "$distance km",
-                    label = "Distance"
+                    label = "Distance",
+                    modifier = Modifier.testTag("goal_distance")
                 )
             }
         }
     }
 }
 @Composable
-fun GoalItem(value: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun GoalItem(value: String, label: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier,horizontalAlignment = Alignment.CenterHorizontally) {
 
         Text(
             text = value,
@@ -239,6 +260,9 @@ fun GoalItem(value: String, label: String) {
         )
     }
 }
+
+
+
 
 
 
