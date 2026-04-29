@@ -9,7 +9,7 @@ data class TrackingUiState(
     val currentLocation: LocationPoint? = null,      // current GPS or mock point
     val points: List<LocationPoint> = emptyList(),   // all points collected for polyline
     val tracking: Boolean = false,
-    val distance: Float = 0.0f,
+    val distance: Double = 0.0,
     val time: Long = 0L,
     val locationPermission: Boolean = false
 )

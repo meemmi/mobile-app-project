@@ -8,7 +8,7 @@ import android.content.Context
 import androidx.room.Room
 
 
-@Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 5)
+@Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 6)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun walkDao(): WalkDao
     abstract fun dogProfileDao(): DogProfileDao

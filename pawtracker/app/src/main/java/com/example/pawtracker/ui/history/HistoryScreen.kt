@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,25 +25,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.data.local.AppDatabase
 import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 @Composable
-fun HistoryScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
+fun HistoryScreen(
+    innerPadding: PaddingValues,
+    viewModel: HistoryViewModel
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val repository = remember {
-        val db = AppDatabase.getDatabase(context)
-        WalkRepositoryImpl(db.walkDao())
-    }
-
-    val viewModel: HistoryViewModel = viewModel(
-        factory = HistoryViewModelFactory(repository)
-    )
-    val uiState by viewModel.uiState.collectAsState()
-
-    Column(modifier = Modifier.fillMaxSize()
-        .padding(innerPadding)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+        .consumeWindowInsets(innerPadding)
+    ) {
 
         HistoryFilterTabs(
             selected = uiState.filter,

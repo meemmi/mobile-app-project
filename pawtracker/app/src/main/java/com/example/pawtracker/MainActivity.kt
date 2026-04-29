@@ -12,6 +12,7 @@ import com.example.pawtracker.ui.theme.PawTrackerTheme
 import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.data.repository.WalkRepository
+import com.example.pawtracker.ui.editprofile.EditProfileViewModel
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,48 +34,38 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.pawtracker.ui.components.NavBar
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.pawtracker.ui.main.MainViewModel
+import com.example.pawtracker.utils.ViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
-    private val database by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "walk_db"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
 
-    private val gpsRepository by lazy { GPSRepository(this) }
-
-    private val walkRepository: WalkRepository by lazy { WalkRepositoryImpl(database.walkDao()) }
-
-    private val dogProfileRepository by lazy { DogProfileRepositoryImpl(database.dogProfileDao())}
-
-    private val historyViewModel by lazy { HistoryViewModel(walkRepository) }
-
-    private val trackingViewModel by lazy { TrackingViewModel(gpsRepository, walkRepository) }
-
-    private val profileViewModel by lazy { ProfileViewModel(dogProfileRepository) }
-
-    private val statisticsViewModel by lazy { StatisticsViewModel(walkRepository, dogProfileRepository) }
-
-    // Permission launcher must be inside class
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            // You can show a message if needed
         }
+
     private fun requestLocationPermission() {
         requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val app = application as PawTrackerApplication
+
+
         // Ask for permission
         requestLocationPermission()
         enableEdgeToEdge()
+
         setContent {
+
+            val mainViewModel: MainViewModel = viewModel(
+                factory = ViewModelFactory { MainViewModel(app.preferenceRepository) }
+            )
+
             val systemDark = isSystemInDarkTheme()
             var isDarkTheme by rememberSaveable { mutableStateOf(systemDark) }
 
@@ -82,14 +73,15 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 Scaffold(
-                    bottomBar = { NavBar(navController) }
+                    bottomBar = { NavBar(navController, has_completed_onboarding = mainViewModel.hasCompletedOnboarding ?: false) }
                 ) { innerPadding ->
-
                     NavGraph(
                         navController = navController,
                         isDarkTheme = isDarkTheme,
                         onToggleTheme = {isDarkTheme = !isDarkTheme },
-                        innerPadding = innerPadding
+                        innerPadding = innerPadding,
+                        viewModel = mainViewModel,
+                        app = app
                     )
                 }
             }

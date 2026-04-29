@@ -4,13 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.data.repository.WalkRepository
-import com.example.pawtracker.data.repository.GPSRepository
 import com.example.pawtracker.model.LocationPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import android.location.Location
+import com.example.pawtracker.data.repository.GPSRepository
+
+import kotlin.math.*
+
 
 
 
@@ -30,7 +32,7 @@ class TrackingViewModel(
 
     //a reference to the coroutine that is collecting GPS updates:trackingjob
     private var trackingJob: Job? = null
-    private var useMockLocation = true
+    private var useMockLocation = false
     private var startTime: Long = 0L
     private var lastPoint: LocationPoint? = null
 
@@ -55,8 +57,8 @@ class TrackingViewModel(
         }
     }
 
+
     fun startTracking() {
-        // Reset UI
         _uiState.value = TrackingUiState(tracking = true)
 
         startTime = System.currentTimeMillis()
@@ -64,7 +66,6 @@ class TrackingViewModel(
 
         trackingJob?.cancel()
         trackingJob = viewModelScope.launch {
-
 
             if (useMockLocation) {
                 mockLocationFlow().collect { point ->
@@ -74,15 +75,32 @@ class TrackingViewModel(
                 gpsRepository.startLocationUpdates { point ->
                     handleNewPoint(point)
                 }
+
             }
         }
     }
 
     private fun handleNewPoint(point: LocationPoint) {
+
+        if (lastPoint != null) {
+
+            val distanceKm = calculateDistance(lastPoint!!, point)
+            val timeDiffMs = point.time - lastPoint!!.time
+
+            val timeDiffSec = if (timeDiffMs <= 0) 1.0 else timeDiffMs / 1000.0
+
+            val speed = distanceKm / (timeDiffSec / 3600.0) // km/h
+            // dog cannot go > 20 km/h
+            // Ignore impossible speeds
+            if (speed > 25) return
+
+            // Ignore tiny GPS noise (< 1 meter)
+            if (distanceKm < 0.001) return
+        }
+
         val addedDistance = if (lastPoint != null) {
             calculateDistance(lastPoint!!, point)
-        } else 0f
-
+        } else 0.0
         lastPoint = point
         val elapsedTime = System.currentTimeMillis() - startTime
 
@@ -127,6 +145,7 @@ class TrackingViewModel(
             )
         }
 
+
         // Reset UI after saving
         _uiState.value = TrackingUiState()
     }
@@ -148,9 +167,23 @@ class TrackingViewModel(
 
     // DISTANCE CALCULATION
 
-    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Float {
-        val result = FloatArray(1)
-        Location.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude, result)
-        return result[0] / 1000f // meters → km
+
+    private fun calculateDistance(a: LocationPoint, b: LocationPoint): Double {
+        val r = 6371e3 // meters
+        val lat1 = Math.toRadians(a.latitude)
+        val lat2 = Math.toRadians(b.latitude)
+        val dLat = Math.toRadians(b.latitude - a.latitude)
+        val dLon = Math.toRadians(b.longitude - a.longitude)
+
+        val h = sin(dLat / 2).pow(2.0) +
+                cos(lat1) * cos(lat2) *
+                sin(dLon / 2).pow(2.0)
+
+        val c = 2 * atan2(sqrt(h), sqrt(1 - h))
+
+        return (r * c) / 1000.0 // km
     }
+
+
 }
+

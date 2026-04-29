@@ -1,7 +1,6 @@
-package com.example.pawtracker.ui.profile
+package com.example.pawtracker.ui.editprofile
 
-// For testing
-data class ProfileUiState(
+data class EditProfileUiState(
     val imageUri: String = "",
     val name: String = "",
     val breed: String = "",

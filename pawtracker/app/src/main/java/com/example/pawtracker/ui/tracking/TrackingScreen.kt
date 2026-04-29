@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pawtracker.R
 import com.example.pawtracker.data.local.AppDatabase
@@ -27,20 +28,12 @@ import com.example.pawtracker.data.repository.WalkRepositoryImpl
 
 
 @Composable
-fun TrackingScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
+fun TrackingScreen(
+    innerPadding: PaddingValues,
+    viewModel: TrackingViewModel
+    ) {
 
-    val db = AppDatabase.getDatabase(context)
-
-    val gpsRepository = GPSRepository(context)
-    val walkRepository = WalkRepositoryImpl(db.walkDao())
-
-    // 3. Create ViewModel with factory
-    val viewModel: TrackingViewModel = viewModel(
-        factory = TrackingViewModelFactory(gpsRepository, walkRepository)
-    )
-
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     TrackingLayout(
         uiState = uiState,
@@ -63,9 +56,10 @@ fun TrackingLayout(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+           .fillMaxSize()
+           .background(MaterialTheme.colorScheme.background)
            .padding(innerPadding)
+           .consumeWindowInsets(innerPadding)
            .padding(24.dp)
     ) {
 

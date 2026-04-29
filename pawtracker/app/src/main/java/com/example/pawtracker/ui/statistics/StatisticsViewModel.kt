@@ -1,5 +1,6 @@
 package com.example.pawtracker.ui.statistics
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.DogProfileEntity
@@ -9,8 +10,10 @@ import com.example.pawtracker.data.repository.WalkRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class StatisticsViewModel(
     private val walkRepository: WalkRepository,
@@ -18,7 +21,7 @@ class StatisticsViewModel(
 ) : ViewModel() {
 
     // Fetch walk statistics as individual flows
-    private val todayDistance = walkRepository.getTodayDistance().map { it ?: 0f }
+    private val todayDistance = walkRepository.getTodayDistance().map { it ?: 0f }.distinctUntilChanged()
     private val todayDuration = walkRepository.getTodayDuration().map { it ?: 0L }
     private val weekDistance = walkRepository.getWeekDistance().map { it ?: 0f }
     private val weekDuration = walkRepository.getWeekDuration().map { it ?: 0L }
@@ -26,6 +29,14 @@ class StatisticsViewModel(
     // Fetch profile to show picture, name, goals
     private val getProfile = profileRepository.getProfile().map { profile ->
         profile ?: DogProfileEntity()
+    }
+
+    init {
+        viewModelScope.launch {
+            todayDistance.collect {
+                Log.d("DEBUG", "Today distance updated: $it")
+            }
+        }
     }
 
     val uiState: StateFlow<StatisticsUiState> =

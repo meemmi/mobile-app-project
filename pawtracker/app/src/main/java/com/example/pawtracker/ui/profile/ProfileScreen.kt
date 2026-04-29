@@ -19,49 +19,36 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.material3.*
 
 // Icons
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Cake
-import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.MonitorWeight
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 
 // Navigation padding
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
-import com.example.pawtracker.data.local.AppDatabase
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
+
 
 @Composable
-fun ProfileScreen(innerPadding: PaddingValues) {
-    val context = LocalContext.current
+fun ProfileScreen(
+    innerPadding: PaddingValues,
+    viewModel: ProfileViewModel,
+    onNavigateToEdit: () -> Unit
+) {
 
-    val repository = remember {
-        val db = AppDatabase.getDatabase(context)
-        DogProfileRepositoryImpl(db.dogProfileDao())
-    }
-
-    val viewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModelFactory(repository)
-    )
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.dogProfile.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer) // Figma background
             .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -69,30 +56,30 @@ fun ProfileScreen(innerPadding: PaddingValues) {
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileHeader(
-            imageUri = state.imageUri,
-            name = state.name
+            imageUri = state?.imageUri ?: "",
+            name = state?.name ?: "Dog"
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileInfoCard(
-            breed = state.breed,
-            age = "4 years old",
-            height = "23–24 inches (male)",
-            weight = "65–75 pounds"
+            breed = state?.breed ?: "",
+            age = if (!state?.age.isNullOrEmpty()) "${state?.age} years old" else "-",
+            height = if (!state?.height.isNullOrEmpty()) "${state?.height} cm" else "-",
+            weight = if (!state?.weight.isNullOrEmpty()) "${state?.weight} kg" else "-"
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         DailyGoalCard(
-            minutes = state.dailyDurationGoal,
-            distance = state.dailyDistanceGoal
+            minutes = state?.dailyDurationGoal?.toString() ?: "0",
+            distance = state?.dailyDistanceGoal?.toString() ?: "0.0"
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = {},
+            onClick = onNavigateToEdit,
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -172,7 +159,7 @@ fun ProfileInfoCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-
+            InfoRow(R.drawable.dog_icon, breed)
             InfoRow(R.drawable.dog_age, age)
             InfoRow(R.drawable.dog_height, height)
             InfoRow(R.drawable.dog_weight, weight)
