@@ -19,13 +19,10 @@ class EditProfileViewModel(
     private val repository: DogProfileRepository
 ) : ViewModel() {
 
-    // Constant stream of profile data from the database to keep the UI screens synced
-    val dogProfile = repository.getProfile()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     // Temporary state to hold user input before it is saved to the database
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(EditProfileUiState())
+    val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 
     init {
         loadInitialData()
