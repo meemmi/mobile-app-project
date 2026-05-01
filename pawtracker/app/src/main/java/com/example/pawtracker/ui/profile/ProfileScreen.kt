@@ -41,7 +41,7 @@ fun ProfileScreen(
     onNavigateToEdit: () -> Unit
 ) {
 
-    val state by viewModel.dogProfile.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -56,24 +56,24 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileHeader(
-            imageUri = state?.imageUri ?: "",
-            name = state?.name ?: "Name"
+            imageUri = state.imageUri,
+            name = state.name.ifEmpty { "Name" }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileInfoCard(
-            breed = state?.breed ?: "Breed not set",
-            age = if (!state?.age.isNullOrEmpty()) "${state?.age} years old" else "Age not set",
-            height = if (!state?.height.isNullOrEmpty()) "${state?.height} cm" else "–",
-            weight = if (!state?.weight.isNullOrEmpty()) "${state?.weight} kg" else "–"
+            breed = state.breed.ifEmpty { "Breed not set" },
+            age = if (state.age.isNotEmpty()) "${state.age} years old" else "Age not set",
+            height = if (state.height.isNotEmpty()) "${state.height} cm" else "–",
+            weight = if (state.weight.isNotEmpty()) "${state.weight} kg" else "–"
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         DailyGoalCard(
-            minutes = state?.dailyDurationGoal?.toString() ?: "0",
-            distance = state?.dailyDistanceGoal?.toString() ?: "0.0"
+            minutes = state.dailyDurationGoal.ifEmpty { "0" },
+            distance = state.dailyDistanceGoal.ifEmpty { "0.0" }
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -137,7 +137,7 @@ fun ProfileHeader(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = if (name.isNotEmpty()) name else "Your Dog",
+            text = if (name.isNotEmpty()) name else "Name",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
