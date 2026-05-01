@@ -46,8 +46,12 @@ fun StatisticsScreen(
 
         // Dog name
         Text(
-            text = state.dogName,
+            text = if (state.dogName.isNotBlank()) state.dogName else "Name",
             style = MaterialTheme.typography.headlineSmall,
+            color = if (state.dogName.isNotBlank())
+                MaterialTheme.colorScheme.onSurface
+            else
+                MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp)
         )
 
