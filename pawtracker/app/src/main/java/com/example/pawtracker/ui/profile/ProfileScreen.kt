@@ -57,16 +57,16 @@ fun ProfileScreen(
 
         ProfileHeader(
             imageUri = state?.imageUri ?: "",
-            name = state?.name ?: "Dog"
+            name = state?.name ?: "Name"
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileInfoCard(
-            breed = state?.breed ?: "",
-            age = if (!state?.age.isNullOrEmpty()) "${state?.age} years old" else "-",
-            height = if (!state?.height.isNullOrEmpty()) "${state?.height} cm" else "-",
-            weight = if (!state?.weight.isNullOrEmpty()) "${state?.weight} kg" else "-"
+            breed = state?.breed ?: "Breed not set",
+            age = if (!state?.age.isNullOrEmpty()) "${state?.age} years old" else "Age not set",
+            height = if (!state?.height.isNullOrEmpty()) "${state?.height} cm" else "–",
+            weight = if (!state?.weight.isNullOrEmpty()) "${state?.weight} kg" else "–"
         )
 
         Spacer(modifier = Modifier.height(20.dp))

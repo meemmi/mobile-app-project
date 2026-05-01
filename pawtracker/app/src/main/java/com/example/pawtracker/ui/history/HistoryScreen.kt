@@ -2,6 +2,7 @@ package com.example.pawtracker.ui.history
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
@@ -48,10 +50,26 @@ fun HistoryScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        HistoryList(walks = uiState.walks ?: emptyList(),
-            modifier = Modifier.weight(1f)
-            )
+        if (uiState.walks.isNullOrEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No history available",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
 
+            HistoryList(
+                walks = uiState.walks ?: emptyList(),
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
