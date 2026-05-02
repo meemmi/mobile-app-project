@@ -1,6 +1,5 @@
 package com.example.pawtracker.ui.profile
 
-// For testing
 data class ProfileUiState(
     val imageUri: String = "",
     val name: String = "",

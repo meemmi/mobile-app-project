@@ -1,37 +1,44 @@
 package com.example.pawtracker.ui.profile
 
-// Compose core
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
-
-// Layout
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-
-// Shapes & drawing
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-
-// Material 3
-import androidx.compose.material3.*
-
-// Icons
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.font.FontWeight
-import coil.compose.rememberAsyncImagePainter
-
-// Navigation padding
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import com.example.pawtracker.R
+import com.example.pawtracker.ui.theme.LocalSpacing
 
 
 @Composable
@@ -42,60 +49,72 @@ fun ProfileScreen(
 ) {
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val spacing = LocalSpacing.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer) // Figma background
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(innerPadding)
             .consumeWindowInsets(innerPadding)
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(spacing.large))
 
         ProfileHeader(
             imageUri = state.imageUri,
-            name = state.name.ifEmpty { "Name" }
+            name = state.name.ifEmpty { stringResource(R.string.profile_name_empty) }
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(spacing.medium))
 
         ProfileInfoCard(
-            breed = state.breed.ifEmpty { "Breed not set" },
-            age = if (state.age.isNotEmpty()) "${state.age} years old" else "Age not set",
-            height = if (state.height.isNotEmpty()) "${state.height} cm" else "–",
-            weight = if (state.weight.isNotEmpty()) "${state.weight} kg" else "–"
+            breed = state.breed.ifEmpty { stringResource(R.string.profile_breed_empty) },
+            age = if (state.age.isNotEmpty()) {
+                stringResource(R.string.profile_age_format, state.age)
+            } else {
+                stringResource(R.string.profile_age_empty)
+            },
+            height = if (state.height.isNotEmpty()) {
+                stringResource(R.string.profile_height_format, state.height)
+            } else {
+                stringResource(R.string.profile_height_empty)
+            },
+            weight = if (state.weight.isNotEmpty()) {
+                stringResource(R.string.profile_weight_format, state.weight)
+            } else {
+                stringResource(R.string.profile_weight_empty)
+            }
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(spacing.medium))
 
         DailyGoalCard(
-            minutes = state.dailyDurationGoal.ifEmpty { "0" },
-            distance = state.dailyDistanceGoal.ifEmpty { "0.0" }
+            minutes = state.dailyDurationGoal.ifEmpty { stringResource(R.string.profile_durationgoal_empty) },
+            distance = state.dailyDistanceGoal.ifEmpty { stringResource(R.string.profile_distancegoal_empty) }
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         Button(
             onClick = onNavigateToEdit,
-            shape = RoundedCornerShape(14.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
+                .height(48.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
             Text(
-                "Edit profile",
-                style = MaterialTheme.typography.bodyLarge,
+                stringResource(R.string.profile_edit_button),
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(spacing.medium))
     }
 }
 @Composable
@@ -103,6 +122,7 @@ fun ProfileHeader(
     imageUri: String,
     name: String
 ) {
+    val spacing = LocalSpacing.current
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Box(
@@ -134,10 +154,10 @@ fun ProfileHeader(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(spacing.medium))
 
         Text(
-            text = if (name.isNotEmpty()) name else "Name",
+            text = if (name.isNotEmpty()) name else stringResource(R.string.profile_name_empty),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -151,27 +171,30 @@ fun ProfileInfoCard(
     height: String,
     weight: String
 ) {
+    val spacing = LocalSpacing.current
+
     Card(
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            InfoRow(R.drawable.dog_icon, breed)
-            InfoRow(R.drawable.dog_age, age)
-            InfoRow(R.drawable.dog_height, height)
-            InfoRow(R.drawable.dog_weight, weight)
+        Column(modifier = Modifier.padding(spacing.medium)) {
+            InfoRow(R.drawable.dog_icon, stringResource(R.string.profile_label_breed), breed)
+            InfoRow(R.drawable.dog_age, stringResource(R.string.profile_label_age), age)
+            InfoRow(R.drawable.dog_height, stringResource(R.string.profile_label_height), height)
+            InfoRow(R.drawable.dog_weight, stringResource(R.string.profile_label_weight), weight)
         }
     }
 }
 @Composable
-fun InfoRow(iconRes: Int, text: String) {
+fun InfoRow(iconRes: Int, label: String, text: String) {
+    val spacing = LocalSpacing.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(vertical = spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -179,10 +202,17 @@ fun InfoRow(iconRes: Int, text: String) {
             painter = painterResource(id = iconRes),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(22.dp)
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(spacing.medium))
+
+        Text(
+            text = "$label: ",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
 
         Text(
             text = text,
@@ -197,25 +227,28 @@ fun DailyGoalCard(
     minutes: String,
     distance: String
 ) {
+    val spacing = LocalSpacing.current
+
     Card(
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier.padding(spacing.medium),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Text(
-                text = "Daily Activity Goal",
+                text = stringResource(R.string.profile_daily_goal_title),
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(spacing.medium))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -223,13 +256,13 @@ fun DailyGoalCard(
             ) {
 
                 GoalItem(
-                    value = "$minutes min",
-                    label = "Duration"
+                    value = stringResource(R.string.profile_duration_format, minutes),
+                    label = stringResource(R.string.profile_duration_label)
                 )
 
                 GoalItem(
-                    value = "$distance km",
-                    label = "Distance"
+                    value = stringResource(R.string.profile_distance_format, distance),
+                    label = stringResource(R.string.profile_distance_label)
                 )
             }
         }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,8 +12,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pawtracker.R
+import com.example.pawtracker.ui.theme.LocalSpacing
 
 // ---------------------- SCREEN ----------------------
 
@@ -26,13 +29,16 @@ fun StatisticsScreen(
     ) {
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val spacing = LocalSpacing.current
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(innerPadding)
             .consumeWindowInsets(innerPadding)
-            .padding(20.dp),
+            .padding(spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -41,27 +47,30 @@ fun StatisticsScreen(
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
-                .background(Color.LightGray)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         )
 
         // Dog name
         Text(
-            text = if (state.dogName.isNotBlank()) state.dogName else "Name",
-            style = MaterialTheme.typography.headlineSmall,
+            text = state.dogName.ifEmpty { stringResource(R.string.profile_name_empty) },
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
             color = if (state.dogName.isNotBlank())
-                MaterialTheme.colorScheme.onSurface
+                MaterialTheme.colorScheme.primary
             else
                 MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = spacing.small)
         )
+
+        Spacer(modifier = Modifier.height(spacing.small))
 
         Text(
-            text = "Today's activity",
+            text = stringResource(R.string.stats_today_activity_label),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(spacing.large))
 
         // Distance + Duration
         Row(
@@ -69,41 +78,43 @@ fun StatisticsScreen(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             StatCard(
-                value = "%.2f km".format(state.todayDistance),
-                label = "Distance"
+                value = stringResource(R.string.stats_distance_km_format, state.todayDistance),
+                label = stringResource(R.string.stats_distance_label)
             )
             StatCard(
                 value = formatDuration(state.todayDuration),
-                label = "Duration"
+                label = stringResource(R.string.stats_duration_label)
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(spacing.medium))
 
         // Start Walk button
         Button(
             onClick = { onStartWalkClick() },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
-            Text("Start Walk")
+            Text(stringResource(R.string.stats_start_walk_button))
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(spacing.extraLarge))
 
-        // ✅ CHART
+        // CHART
         TodayProgressChart(
             today = state.todayDistance,
             goal = state.goalDistance.toFloat()
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(spacing.medium))
 
         Text(
-            text = "%.2f / %.2f km".format(
+            text = stringResource(
+                R.string.stats_progress_comparison_format,
                 state.todayDistance,
                 state.goalDistance
             ),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -163,25 +174,26 @@ fun StatCard(value: String, label: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(16.dp)
+            .padding(LocalSpacing.current.medium)
             .width(140.dp)
     ) {
         Text(value, style = MaterialTheme.typography.titleMedium)
-        Text(label, color = Color.Gray)
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 // ---------------------- FORMAT TIME ----------------------
-
+@Composable
 fun formatDuration(ms: Long): String {
     val totalMinutes = ms / 60000
     val hours = totalMinutes / 60
     val minutes = totalMinutes % 60
 
-    return if (hours > 0)
-        "%d h %02d min".format(hours, minutes)
-    else
-        "%d min".format(minutes)
+    return if (hours > 0) {
+        stringResource(R.string.stats_duration_long_format, hours, minutes)
+    } else {
+        stringResource(R.string.stats_duration_short_format, minutes)
+    }
 }

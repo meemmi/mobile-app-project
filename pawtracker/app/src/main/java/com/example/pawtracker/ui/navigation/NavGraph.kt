@@ -12,7 +12,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.pawtracker.PawTrackerApplication
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import com.example.pawtracker.ui.editprofile.EditProfileScreen
 import com.example.pawtracker.ui.editprofile.EditProfileViewModel
 import com.example.pawtracker.ui.history.HistoryScreen

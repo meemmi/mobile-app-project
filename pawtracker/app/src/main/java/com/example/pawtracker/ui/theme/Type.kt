@@ -2,13 +2,21 @@ package com.example.pawtracker.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.pawtracker.R
 
+
+val Montserrat = FontFamily(
+    Font(R.font.montserrat_regular, FontWeight.Normal),
+    Font(R.font.montserrat_semibold, FontWeight.SemiBold)
+)
 
 val AppTypography = Typography(
     headlineSmall = TextStyle(
+        fontFamily = Montserrat,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
         lineHeight = 32.sp,

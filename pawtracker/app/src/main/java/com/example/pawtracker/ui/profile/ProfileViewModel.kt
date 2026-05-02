@@ -1,16 +1,10 @@
 package com.example.pawtracker.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pawtracker.data.local.DogProfileEntity
 import com.example.pawtracker.data.repository.DogProfileRepository
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
