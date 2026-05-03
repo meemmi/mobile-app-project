@@ -74,7 +74,7 @@ fun TrackingLayout(
     Column(
         modifier = Modifier
            .fillMaxSize()
-           .background(MaterialTheme.colorScheme.primaryContainer)
+           .background(MaterialTheme.colorScheme.background)
            .padding(innerPadding)
            .consumeWindowInsets(innerPadding)
     ) {
@@ -183,7 +183,8 @@ fun TrackingStatistics(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(spacing.extraLarge),
         verticalArrangement = Arrangement.spacedBy(spacing.small)
     ) {
@@ -195,13 +196,13 @@ fun TrackingStatistics(
         ) {
             Text(
                 text = stringResource(R.string.tracking_distance),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = "%.2f km".format(uiState.distance),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -217,13 +218,13 @@ fun TrackingStatistics(
         ) {
             Text(
                 text = stringResource(R.string.tracking_time),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = formattedTime,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -249,7 +250,7 @@ fun ControlButtons(
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(stringResource(R.string.tracking_start))
+            Text(stringResource(R.string.tracking_start), style = MaterialTheme.typography.titleMedium,)
         }
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -260,7 +261,7 @@ fun ControlButtons(
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(stringResource(R.string.tracking_stop))
+            Text(stringResource(R.string.tracking_stop), style = MaterialTheme.typography.titleMedium,)
         }
     }
 }

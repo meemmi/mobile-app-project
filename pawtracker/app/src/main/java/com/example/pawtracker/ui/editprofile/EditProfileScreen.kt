@@ -58,7 +58,6 @@ fun EditProfileScreen(
         Text(
             text = stringResource(R.string.edit_profile_title),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
         )
 
@@ -164,7 +163,7 @@ fun EditProfileScreen(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.primary
             )
 
             BasicTextField(

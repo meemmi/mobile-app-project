@@ -35,7 +35,7 @@ fun StatisticsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.background)
             .padding(innerPadding)
             .consumeWindowInsets(innerPadding)
             .padding(spacing.medium),
@@ -66,7 +66,7 @@ fun StatisticsScreen(
 
         Text(
             text = stringResource(R.string.stats_today_activity_label),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
@@ -94,7 +94,7 @@ fun StatisticsScreen(
             onClick = { onStartWalkClick() },
             modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
-            Text(stringResource(R.string.stats_start_walk_button))
+            Text(stringResource(R.string.stats_start_walk_button), style = MaterialTheme.typography.titleMedium,)
         }
 
         Spacer(modifier = Modifier.height(spacing.extraLarge))
@@ -170,17 +170,29 @@ fun TodayProgressChart(today: Float, goal: Float) {
 // ---------------------- STAT CARD ----------------------
 
 @Composable
-fun StatCard(value: String, label: String) {
+fun StatCard(
+    value: String,
+    label: String,
+    color: Color = MaterialTheme.colorScheme.primary
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(LocalSpacing.current.medium)
             .width(140.dp)
     ) {
-        Text(value, style = MaterialTheme.typography.titleMedium)
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            color = color
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

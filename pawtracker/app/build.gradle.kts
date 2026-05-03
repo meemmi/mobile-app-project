@@ -75,4 +75,5 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.compose.material3:material3-window-size-class")
 }

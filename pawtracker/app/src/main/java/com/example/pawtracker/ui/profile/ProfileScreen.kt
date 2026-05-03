@@ -54,7 +54,7 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.background)
             .padding(innerPadding)
             .consumeWindowInsets(innerPadding)
             .padding(horizontal = spacing.medium),
@@ -159,7 +159,6 @@ fun ProfileHeader(
         Text(
             text = if (name.isNotEmpty()) name else stringResource(R.string.profile_name_empty),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
     }
@@ -209,8 +208,7 @@ fun InfoRow(iconRes: Int, label: String, text: String) {
 
         Text(
             text = "$label: ",
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
 
@@ -243,8 +241,7 @@ fun DailyGoalCard(
 
             Text(
                 text = stringResource(R.string.profile_daily_goal_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary
             )
 
@@ -275,7 +272,6 @@ fun GoalItem(value: String, label: String) {
         Text(
             text = value,
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
 

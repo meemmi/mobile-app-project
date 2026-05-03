@@ -22,7 +22,7 @@ val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
 
-val md_theme_light_background = Color(0xFFFEFBFF)
+val md_theme_light_background = Color(0xFFE1ECFE)
 val md_theme_light_onBackground = Color(0xFF1B1B1F)
 
 val md_theme_light_surface = Color(0xFFFEFBFF)

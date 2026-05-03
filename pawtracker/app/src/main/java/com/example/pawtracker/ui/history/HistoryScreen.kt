@@ -42,7 +42,7 @@ fun HistoryScreen(
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primaryContainer)
+        .background(MaterialTheme.colorScheme.background)
         .padding(innerPadding)
         .consumeWindowInsets(innerPadding)
         .padding(horizontal = spacing.medium)
@@ -127,7 +127,7 @@ fun FilterTab(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(text = text)
+            Text(text = text, style = MaterialTheme.typography.titleMedium)
         }
     } else {
         OutlinedButton(
@@ -137,6 +137,7 @@ fun FilterTab(
         ) {
             Text(
                 text = text,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
         }
@@ -171,7 +172,7 @@ fun WalkHistoryItem(walk: WalkUiModel) {
             .fillMaxWidth()
             .padding(spacing.medium)
     ) {
-        Text(walk.date, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+        Text(walk.date, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
         Text(text = stringResource(R.string.history_item_combined_label, distanceFormatted, timeFormatted),)
         HorizontalDivider(modifier = Modifier.padding(top = spacing.extraSmall))
     }
