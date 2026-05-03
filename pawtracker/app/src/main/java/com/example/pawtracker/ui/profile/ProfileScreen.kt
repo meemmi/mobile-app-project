@@ -3,7 +3,10 @@ package com.example.pawtracker.ui.profile
 // Compose core
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.IconButton
 
 // Layout
 import androidx.compose.foundation.layout.*
@@ -28,6 +31,7 @@ import coil.compose.rememberAsyncImagePainter
 
 // Navigation padding
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.icons.Icons
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,7 +42,9 @@ import com.example.pawtracker.R
 fun ProfileScreen(
     innerPadding: PaddingValues,
     viewModel: ProfileViewModel,
-    onNavigateToEdit: () -> Unit
+    onNavigateToEdit: () -> Unit,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
 ) {
 
     val state by viewModel.dogProfile.collectAsStateWithLifecycle()
@@ -52,6 +58,20 @@ fun ProfileScreen(
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = onToggleTheme,
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    imageVector = if (isDarkTheme)
+                        Icons.Default.LightMode
+                    else
+                        Icons.Default.DarkMode,
+                    contentDescription = "Toggle Theme"
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
