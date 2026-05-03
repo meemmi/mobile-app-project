@@ -68,8 +68,6 @@ fun NavGraph(
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }
                 },
-                isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme,
                 innerPadding = innerPadding,
                 navigationType = navigationType
             )
@@ -126,8 +124,11 @@ fun NavGraph(
             ProfileScreen(
                 innerPadding = innerPadding,
                 viewModel = profileVm,
-                onNavigateToEdit = { navController.navigate(Screen.EditProfile.route) },
-                navigationType = navigationType
+                onNavigateToEdit = {
+                    navController.navigate(Screen.EditProfile.route) },
+                navigationType = navigationType,
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme
             )
         }
 

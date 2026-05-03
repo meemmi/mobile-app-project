@@ -46,8 +46,6 @@ import com.example.pawtracker.ui.theme.LocalSpacing
 fun MainScreen(
     viewModel: MainViewModel,
     onContinueClick: () -> Unit,
-    isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit,
     innerPadding: PaddingValues,
     navigationType: NavigationType
 ) {
@@ -67,22 +65,6 @@ fun MainScreen(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-            IconButton(
-                onClick = onToggleTheme,
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .align(Alignment.TopEnd)
-                    .padding(spacing.medium)
-            ) {
-                Icon(
-                    imageVector = if (isDarkTheme)
-                        Icons.Default.LightMode
-                    else
-                        Icons.Default.DarkMode,
-                    contentDescription = "Toggle Theme"
-                )
-            }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
