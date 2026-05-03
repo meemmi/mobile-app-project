@@ -12,7 +12,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.pawtracker.PawTrackerApplication
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import com.example.pawtracker.ui.editprofile.EditProfileScreen
 import com.example.pawtracker.ui.editprofile.EditProfileViewModel
 import com.example.pawtracker.ui.history.HistoryScreen
@@ -61,9 +60,8 @@ fun NavGraph(
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }
                 },
-                isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme,
                 innerPadding = innerPadding
+
             )
         }
 
@@ -117,7 +115,11 @@ fun NavGraph(
             ProfileScreen(
                 innerPadding = innerPadding,
                 viewModel = profileVm,
-                onNavigateToEdit = { navController.navigate(Screen.EditProfile.route) }
+                onNavigateToEdit = {
+                    navController.navigate(Screen.EditProfile.route) },
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
+
             )
         }
 
