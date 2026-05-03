@@ -1,5 +1,7 @@
 package com.example.pawtracker
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,7 +38,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.pawtracker.ui.components.NavBar
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.pawtracker.data.worker.ReminderScheduler
 import com.example.pawtracker.ui.main.MainViewModel
+import com.example.pawtracker.utils.NotificationHelper
 import com.example.pawtracker.utils.ViewModelFactory
 
 
@@ -50,16 +54,40 @@ class MainActivity : ComponentActivity() {
         requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
+    // NOTIFICATION PERMISSION (Android 13+)
+    private val requestNotificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            // Optional: show toast if denied
+        }
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestNotificationPermissionLauncher.launch(
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val app = application as PawTrackerApplication
 
-
-        // Ask for permission
+// 1️⃣ Request permissions
         requestLocationPermission()
-        enableEdgeToEdge()
+        requestNotificationPermission()
 
+        // 2️⃣ Create notification channel
+        NotificationHelper.createChannel(this)
+
+        // 3️⃣ Schedule daily reminder
+        ReminderScheduler.scheduleDailyReminder(this)
+
+        // 4️⃣ UI setup
+        enableEdgeToEdge()
         setContent {
 
             val mainViewModel: MainViewModel = viewModel(
