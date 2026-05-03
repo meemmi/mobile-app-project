@@ -4,14 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.DogProfileEntity
 import com.example.pawtracker.data.repository.DogProfileRepository
-import com.example.pawtracker.ui.profile.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,13 +16,10 @@ class EditProfileViewModel(
     private val repository: DogProfileRepository
 ) : ViewModel() {
 
-    // Constant stream of profile data from the database to keep the UI screens synced
-    val dogProfile = repository.getProfile()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     // Temporary state to hold user input before it is saved to the database
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(EditProfileUiState())
+    val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 
     init {
         loadInitialData()

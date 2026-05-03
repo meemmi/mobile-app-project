@@ -1,18 +1,22 @@
 package com.example.pawtracker.ui.navigation
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.pawtracker.PawTrackerApplication
-import com.example.pawtracker.data.repository.DogProfileRepositoryImpl
 import com.example.pawtracker.ui.editprofile.EditProfileScreen
 import com.example.pawtracker.ui.editprofile.EditProfileViewModel
 import com.example.pawtracker.ui.history.HistoryScreen
@@ -27,6 +31,7 @@ import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.utils.ViewModelFactory
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -34,7 +39,8 @@ fun NavGraph(
     onToggleTheme: () -> Unit,
     innerPadding: PaddingValues,
     viewModel: MainViewModel,
-    app: PawTrackerApplication
+    app: PawTrackerApplication,
+    navigationType: NavigationType
 ) {
     val hasCompletedOnboarding = viewModel.hasCompletedOnboarding
 
@@ -51,6 +57,7 @@ fun NavGraph(
         navController = navController,
         startDestination = startDest
     ) {
+
         // 1. Main screen / Onboarding screen
         composable(Screen.Main.route) {
             MainScreen(
@@ -61,9 +68,8 @@ fun NavGraph(
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }
                 },
-                isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme,
-                innerPadding = innerPadding
+                innerPadding = innerPadding,
+                navigationType = navigationType
             )
         }
 
@@ -83,7 +89,8 @@ fun NavGraph(
                     }
                     launchSingleTop = true
                     restoreState = true
-                } }
+                } },
+                navigationType = navigationType
             )
         }
 
@@ -94,7 +101,7 @@ fun NavGraph(
                     TrackingViewModel(app.gpsRepository, app.walkRepository)
                 }
             )
-            TrackingScreen(innerPadding = innerPadding, viewModel = trackingVm)
+            TrackingScreen(innerPadding = innerPadding, viewModel = trackingVm, navigationType = navigationType)
         }
 
         // 4. History screen
@@ -104,7 +111,7 @@ fun NavGraph(
                     HistoryViewModel(app.walkRepository)
                 }
             )
-            HistoryScreen(innerPadding = innerPadding, viewModel = historyVm)
+            HistoryScreen(innerPadding = innerPadding, viewModel = historyVm, navigationType = navigationType)
         }
 
         // 5. Profile screen
@@ -117,7 +124,11 @@ fun NavGraph(
             ProfileScreen(
                 innerPadding = innerPadding,
                 viewModel = profileVm,
-                onNavigateToEdit = { navController.navigate(Screen.EditProfile.route) }
+                onNavigateToEdit = {
+                    navController.navigate(Screen.EditProfile.route) },
+                navigationType = navigationType,
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme
             )
         }
 
@@ -131,22 +142,8 @@ fun NavGraph(
             EditProfileScreen(
                 viewModel = editVm,
                 onNavigateBack = { navController.popBackStack() },
-                innerPadding = innerPadding
-            )
-        }
-
-// MUOKKAUSNÄKYMÄ
-        composable(Screen.EditProfile.route) {
-            val editViewModel: EditProfileViewModel = viewModel(
-                factory = ViewModelFactory {
-                    EditProfileViewModel(app.dogProfileRepository)
-                }
-            )
-
-            EditProfileScreen(
-                viewModel = editViewModel,
-                onNavigateBack = { navController.popBackStack() },
-                innerPadding = innerPadding
+                innerPadding = innerPadding,
+                navigationType = navigationType
             )
         }
     }

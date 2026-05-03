@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.compose.material3.window.size.class1)
     ksp(libs.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -74,4 +76,5 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.compose.material3:material3-window-size-class")
 }

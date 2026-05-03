@@ -1,11 +1,11 @@
 package com.example.pawtracker.data.local
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import android.content.Context
-import androidx.room.Room
 
 
 @Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 6)

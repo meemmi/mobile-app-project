@@ -22,7 +22,7 @@ val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
 
-val md_theme_light_background = Color(0xFFFEFBFF)
+val md_theme_light_background = Color(0xFFE1ECFE)
 val md_theme_light_onBackground = Color(0xFF1B1B1F)
 
 val md_theme_light_surface = Color(0xFFFEFBFF)
@@ -63,7 +63,7 @@ val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
 val md_theme_dark_background = Color(0xFF1B1B1F)
 val md_theme_dark_onBackground = Color(0xFFE4E1E6)
 
-val md_theme_dark_surface = Color(0xFF1B1B1F)
+val md_theme_dark_surface = Color(0x401B1B1F)
 val md_theme_dark_onSurface = Color(0xFFE4E1E6)
 val md_theme_dark_surfaceVariant = Color(0xFF46464F)
 val md_theme_dark_onSurfaceVariant = Color(0xFFC7C5D0)
