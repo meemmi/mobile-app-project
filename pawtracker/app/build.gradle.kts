@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.compose.material3.window.size.class1)
     ksp(libs.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

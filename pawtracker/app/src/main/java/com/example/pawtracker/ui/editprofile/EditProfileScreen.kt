@@ -2,9 +2,11 @@ package com.example.pawtracker.ui.editprofile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,15 +35,42 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
+import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 
 @Composable
 fun EditProfileScreen(
     viewModel: EditProfileViewModel,
     onNavigateBack: () -> Unit,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    navigationType: NavigationType
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    if (navigationType != NavigationType.BOTTOM_NAVIGATION) {
+        HorizontalEditProfileContent(
+            state = state,
+            viewModel = viewModel,
+            onNavigateBack = onNavigateBack,
+            innerPadding = innerPadding
+        )
+    } else {
+        VerticalEditProfileContent(
+            state = state,
+            viewModel = viewModel,
+            onNavigateBack = onNavigateBack,
+            innerPadding = innerPadding
+        )
+    }
+}
+
+@Composable
+private fun VerticalEditProfileContent(
+    state: EditProfileUiState,
+    viewModel: EditProfileViewModel,
+    onNavigateBack: () -> Unit,
+    innerPadding: PaddingValues
+) {
     val spacing = LocalSpacing.current
 
     Column(
@@ -63,69 +92,11 @@ fun EditProfileScreen(
 
         Spacer(modifier = Modifier.height(spacing.large))
 
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { /* Optional Feature: Profile picture implementation */ },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(R.string.edit_profile_add_picture),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+        EditProfilePicture()
 
-        }
+        Spacer(modifier = Modifier.height(spacing.medium))
 
-
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_name_label),
-            value = state.name,
-            onValueChange = viewModel::onNameChange
-        )
-
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_age_label),
-            value = state.age,
-            onValueChange = viewModel::onAgeChange,
-            keyboardType = KeyboardType.Number
-        )
-
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_breed_label),
-            value = state.breed,
-            onValueChange = viewModel::onBreedChange
-        )
-
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_height_label),
-            value = state.height,
-            onValueChange = viewModel::onHeightChange,
-            keyboardType = KeyboardType.Number
-        )
-
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_weight_label),
-            value = state.weight,
-            onValueChange = viewModel::onWeightChange,
-            keyboardType = KeyboardType.Number
-        )
-
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_distancegoal_label),
-            value = state.dailyDistanceGoal,
-            onValueChange = viewModel::onDailyDistanceChange,
-            keyboardType = KeyboardType.Decimal
-        )
-        ProfileInputField(
-            label = stringResource(R.string.edit_profile_durationgoal_label),
-            value = state.dailyDurationGoal,
-            onValueChange = viewModel::onDailyDurationChange,
-            keyboardType = KeyboardType.Number
-        )
+        EditProfileForm(state = state, viewModel = viewModel)
 
         Spacer(modifier = Modifier.height(spacing.large))
 
@@ -138,13 +109,142 @@ fun EditProfileScreen(
                 .fillMaxWidth()
                 .height(48.dp)
         ) {
-            Text(stringResource(R.string.edit_profile_save_button),
-            style = MaterialTheme.typography.titleMedium
+            Text(
+                text = stringResource(R.string.edit_profile_save_button),
+                style = MaterialTheme.typography.titleMedium
             )
         }
         Spacer(modifier = Modifier.height(spacing.large))
     }
 }
+
+@Composable
+private fun HorizontalEditProfileContent(
+    state: EditProfileUiState,
+    viewModel: EditProfileViewModel,
+    onNavigateBack: () -> Unit,
+    innerPadding: PaddingValues
+) {
+    val spacing = LocalSpacing.current
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
+            .padding(horizontal = spacing.medium),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.edit_profile_title),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Spacer(modifier = Modifier.height(spacing.large))
+
+            EditProfilePicture()
+
+            Spacer(modifier = Modifier.height(spacing.large))
+
+            Button(
+                onClick = {
+                    viewModel.save()
+                    onNavigateBack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(48.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.edit_profile_save_button),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .weight(1.2f)
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = spacing.medium)
+        ) {
+            EditProfileForm(state = state, viewModel = viewModel)
+        }
+    }
+}
+
+@Composable
+private fun EditProfileForm(
+    state: EditProfileUiState,
+    viewModel: EditProfileViewModel
+) {
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_name_label),
+        value = state.name,
+        onValueChange = viewModel::onNameChange
+    )
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_age_label),
+        value = state.age,
+        onValueChange = viewModel::onAgeChange,
+        keyboardType = KeyboardType.Number
+    )
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_breed_label),
+        value = state.breed,
+        onValueChange = viewModel::onBreedChange
+    )
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_height_label),
+        value = state.height,
+        onValueChange = viewModel::onHeightChange,
+        keyboardType = KeyboardType.Number
+    )
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_weight_label),
+        value = state.weight,
+        onValueChange = viewModel::onWeightChange,
+        keyboardType = KeyboardType.Number
+    )
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_distancegoal_label),
+        value = state.dailyDistanceGoal,
+        onValueChange = viewModel::onDailyDistanceChange,
+        keyboardType = KeyboardType.Decimal
+    )
+    ProfileInputField(
+        label = stringResource(R.string.edit_profile_durationgoal_label),
+        value = state.dailyDurationGoal,
+        onValueChange = viewModel::onDailyDurationChange,
+        keyboardType = KeyboardType.Number
+    )
+}
+
+@Composable
+fun EditProfilePicture() {
+    Box(
+        modifier = Modifier
+            .size(120.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clickable { /* Optional Feature: Profile picture */ },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.edit_profile_add_picture),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 
     @Composable
     fun ProfileInputField(

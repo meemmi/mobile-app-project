@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Paw Tracker</string>
+    <string name="main_continue_button">Continue</string>
     <string name="tracking_start">Start</string>
     <string name="tracking_stop">Stop</string>
     <string name="tracking_distance">Distance</string>

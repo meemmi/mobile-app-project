@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -38,17 +40,101 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.example.pawtracker.R
+import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+import kotlin.sequences.ifEmpty
 
 
 @Composable
 fun ProfileScreen(
     innerPadding: PaddingValues,
     viewModel: ProfileViewModel,
-    onNavigateToEdit: () -> Unit
+    onNavigateToEdit: () -> Unit,
+    navigationType: NavigationType
 ) {
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
+        VerticalProfileContent(
+            state = state,
+            innerPadding = innerPadding,
+            onNavigateToEdit = onNavigateToEdit
+        )
+    } else {
+        HorizontalProfileContent(
+            state = state,
+            innerPadding = innerPadding,
+            onNavigateToEdit = onNavigateToEdit
+        )
+    }
+}
+
+@Composable
+fun HorizontalProfileContent(
+    state: ProfileUiState,
+    innerPadding: PaddingValues,
+    onNavigateToEdit: () -> Unit
+) {
+    val spacing = LocalSpacing.current
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
+            .padding(spacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(spacing.large)
+    ) {
+
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ProfileHeader(
+                imageUri = state.imageUri,
+                name = state.name.ifEmpty { stringResource(R.string.profile_name_empty) }
+            )
+
+            Spacer(modifier = Modifier.height(spacing.large))
+
+            Button(
+                onClick = onNavigateToEdit,
+                modifier = Modifier.fillMaxWidth(0.8f).height(48.dp)
+            ) {
+                Text(stringResource(R.string.profile_edit_button))
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .weight(1.5f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(spacing.medium)
+        ) {
+            ProfileInfoCard(
+                breed = state.breed.ifEmpty { stringResource(R.string.profile_breed_empty) },
+                age = if (state.age.isNotEmpty()) stringResource(R.string.profile_age_format, state.age) else stringResource(R.string.profile_age_empty),
+                height = if (state.height.isNotEmpty()) stringResource(R.string.profile_height_format, state.height) else stringResource(R.string.profile_height_empty),
+                weight = if (state.weight.isNotEmpty()) stringResource(R.string.profile_weight_format, state.weight) else stringResource(R.string.profile_weight_empty)
+            )
+
+            DailyGoalCard(
+                minutes = state.dailyDurationGoal.ifEmpty { stringResource(R.string.profile_durationgoal_empty) },
+                distance = state.dailyDistanceGoal.ifEmpty { stringResource(R.string.profile_distancegoal_empty) }
+            )
+        }
+    }
+}
+
+@Composable
+fun VerticalProfileContent(
+    state: ProfileUiState,
+    innerPadding: PaddingValues,
+    onNavigateToEdit: () -> Unit
+) {
     val spacing = LocalSpacing.current
 
     Column(
@@ -57,10 +143,10 @@ fun ProfileScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(innerPadding)
             .consumeWindowInsets(innerPadding)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Spacer(modifier = Modifier.height(spacing.large))
 
         ProfileHeader(
@@ -100,23 +186,17 @@ fun ProfileScreen(
 
         Button(
             onClick = onNavigateToEdit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+            modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
-            Text(
-                stringResource(R.string.profile_edit_button),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+            Text(stringResource(R.string.profile_edit_button))
         }
 
         Spacer(modifier = Modifier.height(spacing.medium))
     }
 }
+
+
+
 @Composable
 fun ProfileHeader(
     imageUri: String,
@@ -134,7 +214,6 @@ fun ProfileHeader(
         ) {
             when {
                 imageUri.isNotEmpty() -> {
-                    // User-selected image
                     Image(
                         painter = rememberAsyncImagePainter(imageUri),
                         contentDescription = null,
@@ -144,7 +223,6 @@ fun ProfileHeader(
                 }
 
                 else -> {
-                    // Default local drawable (dog1.jpg)
                     Image(
                         painter = painterResource(id = R.drawable.dog1),
                         contentDescription = null,

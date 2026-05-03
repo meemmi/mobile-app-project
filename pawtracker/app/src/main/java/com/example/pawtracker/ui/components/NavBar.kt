@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -34,7 +35,7 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
     if (currentRoute != Screen.Main.route) {
         NavigationBar(
             modifier = Modifier.navigationBarsPadding(),
-            windowInsets = WindowInsets.navigationBars
+            windowInsets = WindowInsets.navigationBars,
         ) {
 
             NavigationBarItem(

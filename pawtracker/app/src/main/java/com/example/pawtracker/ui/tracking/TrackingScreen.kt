@@ -8,17 +8,21 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
+import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -45,7 +50,8 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun TrackingScreen(
     innerPadding: PaddingValues,
-    viewModel: TrackingViewModel
+    viewModel: TrackingViewModel,
+    navigationType: NavigationType
     ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,7 +60,8 @@ fun TrackingScreen(
         uiState = uiState,
         onStart = { viewModel.startTracking() },
         onStop = { viewModel.stopTracking() },
-        innerPadding = innerPadding
+        innerPadding = innerPadding,
+        navigationType = navigationType
 
     )
 }
@@ -67,43 +74,80 @@ fun TrackingLayout(
     uiState: TrackingUiState,
     onStart: () -> Unit,
     onStop: () -> Unit,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    navigationType : NavigationType
 ) {
     val spacing = LocalSpacing.current
 
-    Column(
-        modifier = Modifier
-           .fillMaxSize()
-           .background(MaterialTheme.colorScheme.background)
-           .padding(innerPadding)
-           .consumeWindowInsets(innerPadding)
-    ) {
-
-        TrackingMap(
-            uiState = uiState,
-            modifier = Modifier.weight(2f)
-        )
-
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-
+    if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(spacing.medium),
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
         ) {
 
-            TrackingStatistics(uiState = uiState)
-
-            ControlButtons(
-                tracking = uiState.tracking,
-                onStart = onStart,
-                onStop = onStop
+            TrackingMap(
+                uiState = uiState,
+                modifier = Modifier.weight(2f)
             )
+
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(spacing.medium),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                TrackingStatistics(uiState = uiState)
+
+                ControlButtons(
+                    tracking = uiState.tracking,
+                    onStart = onStart,
+                    onStop = onStop
+                )
+            }
+        }
+    } else {
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            TrackingMap(
+                uiState = uiState,
+                modifier = Modifier.weight(1.5f).fillMaxHeight()
+            )
+
+            VerticalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(spacing.medium),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                TrackingStatistics(uiState = uiState)
+
+                Spacer(modifier = Modifier.height(spacing.medium))
+
+                ControlButtons(
+                    tracking = uiState.tracking,
+                    onStart = onStart,
+                    onStop = onStop
+                )
+            }
         }
     }
 }
