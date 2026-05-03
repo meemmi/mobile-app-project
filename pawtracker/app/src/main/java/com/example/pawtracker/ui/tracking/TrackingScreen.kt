@@ -228,7 +228,6 @@ fun TrackingStatistics(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.surface)
-            .background(MaterialTheme.colorScheme.surface)
             .padding(spacing.extraLarge),
         verticalArrangement = Arrangement.spacedBy(spacing.small)
     ) {
