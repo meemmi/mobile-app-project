@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -168,11 +169,13 @@ fun TrackingMap(
         )
     }
     // Move camera when location updates
+
     LaunchedEffect(uiState.currentLocation) {
         uiState.currentLocation?.let { point ->
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                    LatLng(point.latitude, point.longitude),
-                    15f
+            val target = LatLng(point.latitude, point.longitude)
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(target, 15f),
+                durationMs = 1000
             )
         }
     }
@@ -181,10 +184,11 @@ fun TrackingMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
-            isMyLocationEnabled = uiState.locationPermission),
+            isMyLocationEnabled = uiState.locationPermission
+        ),
         uiSettings = MapUiSettings(
-            zoomControlsEnabled = false,
-            myLocationButtonEnabled = true
+            myLocationButtonEnabled = true,
+            zoomControlsEnabled = false
         )
     ) {
         Polyline(
