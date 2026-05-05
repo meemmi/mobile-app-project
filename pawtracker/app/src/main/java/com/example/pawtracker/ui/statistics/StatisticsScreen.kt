@@ -226,7 +226,7 @@ fun TodayProgressChart(today: Float, goal: Float, modifier: Modifier = Modifier)
 
 // ---------------------- STAT CARD ----------------------
 
-@Composable
+/*@Composable
 fun StatisticsCard(
     value: String,
     label: String,
@@ -250,6 +250,37 @@ fun StatisticsCard(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}*/
+@Composable
+fun StatisticsCard(
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier,
+    valueColor: Color = MaterialTheme.colorScheme.primary
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(LocalSpacing.current.medium)
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                color = valueColor
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
