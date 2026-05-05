@@ -190,7 +190,10 @@ fun TrackingMap(
         Polyline(
             points = uiState.points.map {
                 LatLng(it.latitude, it.longitude)
-            }
+            },
+            color = Color.Blue,
+            width = 8f
+
         )
 
         uiState.currentLocation?.let { point ->
