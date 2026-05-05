@@ -26,16 +26,19 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -160,6 +163,12 @@ fun TrackingMap(
     uiState: TrackingUiState,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    // Load dog icon from drawable
+    val dogIcon = remember {
+        BitmapDescriptorFactory.fromResource(R.drawable.dog1)
+    }
     //initial position before real GPS location arrives.
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
@@ -201,7 +210,8 @@ fun TrackingMap(
                 state = MarkerState(
                     position = LatLng(point.latitude, point.longitude)
                 ),
-                title = "Current"
+                title = "Dog",
+                icon = dogIcon
             )
         }
     }
