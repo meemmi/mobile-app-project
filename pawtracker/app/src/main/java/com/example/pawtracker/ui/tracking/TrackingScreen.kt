@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -187,7 +188,8 @@ fun TrackingMap(
     }
 
     GoogleMap(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .testTag("tracking_map"),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
             isMyLocationEnabled = uiState.locationPermission),
@@ -201,7 +203,8 @@ fun TrackingMap(
                 LatLng(it.latitude, it.longitude)
             },
             color = Color.Blue,
-            width = 8f
+            width = 8f,
+            tag = "tracking_polyline"
 
         )
 
@@ -211,7 +214,9 @@ fun TrackingMap(
                     position = LatLng(point.latitude, point.longitude)
                 ),
                 title = "Dog",
-                icon = dogIcon
+                icon = dogIcon,
+                tag = "tracking_marker"
+
             )
         }
     }
@@ -258,7 +263,8 @@ fun TrackingStatistics(
             Text(
                 text = "%.2f km".format(uiState.distance),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.testTag("tracking_distance")
             )
         }
 
@@ -280,7 +286,8 @@ fun TrackingStatistics(
             Text(
                 text = formattedTime,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.testTag("tracking_time")
             )
         }
     }
@@ -303,8 +310,10 @@ fun ControlButtons(
         Button(
             onClick = onStart,
             enabled = !tracking,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
+                .testTag("tracking_start_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+
         ) {
             Text(stringResource(R.string.tracking_start), style = MaterialTheme.typography.titleMedium,)
         }
@@ -314,7 +323,8 @@ fun ControlButtons(
         Button(
             onClick = onStop,
             enabled = tracking,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
+                .testTag("tracking_stop_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(stringResource(R.string.tracking_stop), style = MaterialTheme.typography.titleMedium,)
