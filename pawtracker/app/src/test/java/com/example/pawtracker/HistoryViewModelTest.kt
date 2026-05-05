@@ -197,6 +197,7 @@ class HistoryViewModelTest {
         advanceUntilIdle()
 
         viewModel.setFilter(WalkFilter.Weekly)
+        advanceUntilIdle()
 
         val state = viewModel.uiState.value
 
@@ -238,13 +239,15 @@ class HistoryViewModelTest {
 
     private fun walkThisWeek(): WalkEntity {
         val cal = Calendar.getInstance()
-        cal.add(Calendar.DAY_OF_YEAR, -2)
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        cal.add(Calendar.DAY_OF_WEEK, 1)
         val t = cal.timeInMillis
         return WalkEntity(3, t, t, 1f, 100L, 10)
     }
 
     private fun walkLastWeek(): WalkEntity {
         val cal = Calendar.getInstance()
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
         cal.add(Calendar.WEEK_OF_YEAR, -1)
         val t = cal.timeInMillis
         return WalkEntity(4, t, t, 1f, 100L, 10)
