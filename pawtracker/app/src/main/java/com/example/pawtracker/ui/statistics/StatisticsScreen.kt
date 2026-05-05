@@ -8,7 +8,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,8 @@ import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 import com.example.pawtracker.ui.theme.Spacing
+import androidx.compose.ui.platform.testTag
+
 
 // ---------------------- SCREEN ----------------------
 
@@ -77,7 +78,9 @@ fun VerticalStatisticsContent(
 
         Button(
             onClick = onStartWalkClick,
-            modifier = Modifier.fillMaxWidth().height(48.dp)
+            modifier = Modifier.fillMaxWidth()
+                .height(48.dp)
+                .testTag("stats_start_walk_button")
         ) {
             Text(stringResource(R.string.stats_start_walk_button))
         }
@@ -152,7 +155,9 @@ fun DogProfileHeader(state: StatisticsUiState, spacing: Spacing) {
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(top = spacing.small)
+            modifier = Modifier
+                .padding(top = spacing.small)
+                .testTag("stats_dog_name")
         )
     }
 }
@@ -219,6 +224,7 @@ fun TodayProgressChart(today: Float, goal: Float, modifier: Modifier = Modifier)
         // Center percentage text
         Text(
             text = "${(progress * 100).toInt()}%",
+            modifier = Modifier.testTag("stats_progress_percent"),
             style = MaterialTheme.typography.headlineMedium
         )
     }
