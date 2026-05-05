@@ -27,6 +27,10 @@ class TrackingViewModel(
     private val walkRepository: WalkRepository
 ) : ViewModel() {
 
+    init {
+        loadLastLocation()
+    }
+
     private val _uiState = MutableStateFlow(TrackingUiState())
     val uiState: StateFlow<TrackingUiState> = _uiState
 
@@ -154,12 +158,13 @@ class TrackingViewModel(
     fun loadLastLocation() {
         if (!useMockLocation) {
             gpsRepository.getLastLocation { point ->
-                viewModelScope.launch {
+                if (point != null) {
                     _uiState.update { it.copy(currentLocation = point) }
                 }
             }
         }
     }
+
 
     fun setUseMockLocation(enable: Boolean) {
         useMockLocation = enable
