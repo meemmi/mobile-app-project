@@ -57,7 +57,7 @@ fun TrackingScreen(
     viewModel: TrackingViewModel,
     navigationType: NavigationType
     ) {
-    Box(Modifier.testTag("tracking_screen"))
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     TrackingLayout(

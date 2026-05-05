@@ -49,7 +49,6 @@ fun ProfileScreen(
     onToggleTheme: () -> Unit,
 
 ) {
-
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
