@@ -1,7 +1,9 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    id("jacoco")
 }
 
 android {
@@ -30,6 +32,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        getByName("debug") {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
     }
     compileOptions {
@@ -77,4 +83,102 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.compose.material3:material3-window-size-class")
+}
+
+// Jacoco configuration
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+// 🔹 Task: unpack classes.jar (AGP 8 puts classes inside this JAR)
+tasks.register<Copy>("unpackJacocoClasses") {
+
+    // This task must run AFTER the JAR is created
+    dependsOn("bundleDebugClassesToCompileJar")
+
+    val classesJar = layout.buildDirectory.file(
+        "intermediates/compile_app_classes_jar/debug/bundleDebugClassesToCompileJar/classes.jar"
+    )
+
+    val outputDir = layout.buildDirectory.dir("tmp/jacoco-unpacked-classes")
+
+    from(zipTree(classesJar))
+    into(outputDir)
+}
+
+// 🔹 Task: FULL coverage report (unit + UI tests)
+tasks.register<JacocoReport>("jacocoFullReport") {
+
+    // Order matters
+    dependsOn(
+        "testDebugUnitTest",              // Unit tests
+        "connectedDebugAndroidTest",      // UI tests
+        "unpackJacocoClasses"             // Extract classes
+    )
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "**/*\$Lambda$*.*",
+        "**/*\$inlined$*.*"
+    )
+
+    val unpackedDir = layout.buildDirectory.dir("tmp/jacoco-unpacked-classes")
+
+    classDirectories.setFrom(
+        fileTree(unpackedDir) {
+            include(
+                "**/com/example/pawtracker/ui/**",
+                "**/com/example/pawtracker/data/repository/**",
+                "**/com/example/pawtracker/ui/theme/**"
+            )
+
+            // ⭐ EXCLUDE: stuff you don't want counted
+            exclude(
+                "**/com/example/pawtracker/ui/components/**",
+                "**/com/example/pawtracker/mapper/**",
+                "**/com/example/pawtracker/utils/**",
+                "**/com/example/pawtracker/data/local/**",
+                "**/com/example/pawtracker/domain/**",
+                "**/com/example/pawtracker/converters/**",
+                "**/com/example/pawtracker/preferences/**",
+
+                // Android auto-generated
+                "**/R.class",
+                "**/R$*.class",
+                "**/BuildConfig.*",
+                "**/Manifest*.*",
+
+                // Test classes
+                "**/*Test*.*",
+                "**/*\$Lambda$*.*",
+                "**/*\$inlined$*.*"
+            )
+        }
+    )
+
+    sourceDirectories.setFrom(
+        files("src/main/java", "src/main/kotlin")
+    )
+
+    executionData.setFrom(
+        fileTree(layout.buildDirectory) {
+            include(
+                // Unit test coverage
+                "jacoco/testDebugUnitTest.exec",
+
+                // UI test coverage
+                "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
+            )
+        }
+    )
 }
