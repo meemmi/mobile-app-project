@@ -15,7 +15,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
+/*@OptIn(ExperimentalCoroutinesApi::class)
 class StatisticsViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
@@ -34,7 +34,7 @@ class StatisticsViewModelTest {
     fun `combines repository data into statistics ui state`() = runTest {
 
         val viewModel = StatisticsViewModel(
-            FakeWalkRepository(),
+            FakeWalkRepositoryForHistory(),
             FakeDogProfileRepository()
         )
 
@@ -59,4 +59,46 @@ class StatisticsViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+}*/
+@OptIn(ExperimentalCoroutinesApi::class)
+class StatisticsViewModelTest {
+
+    private val dispatcher = StandardTestDispatcher()
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(dispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `combines repository data into statistics ui state`() = runTest {
+        val viewModel = StatisticsViewModel(
+            FakeWalkRepositoryForStatistics(),
+            FakeDogProfileRepository()
+        )
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+
+            assertEquals(2f, state.todayDistance)
+            assertEquals(100L, state.todayDuration)
+            assertEquals(10f, state.weekDistance)
+            assertEquals(500L, state.weekDuration)
+
+            assertEquals(5f, state.goalDistance)
+            assertEquals(30L, state.goalDuration)
+
+            assertEquals("Nelli", state.dogName)
+            assertEquals("testUri", state.imageUri)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
+
