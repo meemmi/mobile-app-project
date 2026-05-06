@@ -36,6 +36,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+import androidx.compose.ui.platform.testTag
 
 
 @Composable
@@ -48,7 +49,6 @@ fun ProfileScreen(
     onToggleTheme: () -> Unit,
 
 ) {
-
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
@@ -274,7 +274,8 @@ fun ProfileHeader(
         Text(
             text = if (name.isNotEmpty()) name else stringResource(R.string.profile_name_empty),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.testTag("profile_name")
         )
     }
 }
@@ -290,7 +291,7 @@ fun ProfileInfoCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -345,7 +346,7 @@ fun DailyGoalCard(
     Card(
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = Modifier.fillMaxWidth()
     ) {

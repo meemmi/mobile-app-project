@@ -26,10 +26,13 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,6 +40,7 @@ import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -193,8 +197,10 @@ fun TrackingMap(
     ) {
         Polyline(
             points = uiState.points.map {
-                LatLng(it.latitude, it.longitude)
-            }
+                LatLng(it.latitude, it.longitude)},
+                color = Color(0xFF1A73E8),
+                width = 8f
+
         )
 
         uiState.currentLocation?.let { point ->
@@ -202,12 +208,11 @@ fun TrackingMap(
                 state = MarkerState(
                     position = LatLng(point.latitude, point.longitude)
                 ),
-                title = "Current"
+                title = "Dog"
             )
         }
     }
 }
-
 /**
  * Show statistics below the map
  */
@@ -231,7 +236,7 @@ fun TrackingStatistics(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(spacing.extraLarge),
         verticalArrangement = Arrangement.spacedBy(spacing.small)
     ) {
@@ -249,7 +254,8 @@ fun TrackingStatistics(
             Text(
                 text = "%.2f km".format(uiState.distance),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.testTag("tracking_distance")
             )
         }
 
@@ -271,7 +277,8 @@ fun TrackingStatistics(
             Text(
                 text = formattedTime,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.testTag("tracking_time")
             )
         }
     }
@@ -294,8 +301,10 @@ fun ControlButtons(
         Button(
             onClick = onStart,
             enabled = !tracking,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
+                .testTag("tracking_start_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+
         ) {
             Text(stringResource(R.string.tracking_start), style = MaterialTheme.typography.titleMedium,)
         }
@@ -305,7 +314,8 @@ fun ControlButtons(
         Button(
             onClick = onStop,
             enabled = tracking,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
+                .testTag("tracking_stop_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(stringResource(R.string.tracking_stop), style = MaterialTheme.typography.titleMedium,)

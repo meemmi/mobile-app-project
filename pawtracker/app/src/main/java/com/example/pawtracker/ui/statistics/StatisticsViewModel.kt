@@ -33,7 +33,7 @@ class StatisticsViewModel(
     init {
         viewModelScope.launch {
             todayDistance.collect {
-                Log.d("DEBUG", "Today distance updated: $it")
+               // Log.d("DEBUG", "Today distance updated: $it")
             }
         }
     }
@@ -59,7 +59,8 @@ class StatisticsViewModel(
             )
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+           // SharingStarted.WhileSubscribed(5000),
+            SharingStarted.Eagerly,
             StatisticsUiState()
         )
 }
