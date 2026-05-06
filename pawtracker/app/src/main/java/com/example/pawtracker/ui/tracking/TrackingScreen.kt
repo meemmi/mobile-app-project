@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -164,12 +165,6 @@ fun TrackingMap(
     uiState: TrackingUiState,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
-    // Load dog icon from drawable
-    val dogIcon = remember {
-        BitmapDescriptorFactory.fromResource(R.drawable.dog1)
-    }
     //initial position before real GPS location arrives.
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
@@ -178,33 +173,33 @@ fun TrackingMap(
         )
     }
     // Move camera when location updates
+
     LaunchedEffect(uiState.currentLocation) {
         uiState.currentLocation?.let { point ->
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                    LatLng(point.latitude, point.longitude),
-                    15f
+            val target = LatLng(point.latitude, point.longitude)
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(target, 15f),
+                durationMs = 1000
             )
         }
     }
 
     GoogleMap(
-        modifier = modifier.fillMaxSize()
-            .testTag("tracking_map"),
+        modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
-            isMyLocationEnabled = uiState.locationPermission),
+            isMyLocationEnabled = uiState.locationPermission
+        ),
         uiSettings = MapUiSettings(
-            zoomControlsEnabled = false,
-            myLocationButtonEnabled = true
+            myLocationButtonEnabled = true,
+            zoomControlsEnabled = false
         )
     ) {
         Polyline(
             points = uiState.points.map {
-                LatLng(it.latitude, it.longitude)
-            },
-            color = Color.Blue,
-            width = 8f,
-            tag = "tracking_polyline"
+                LatLng(it.latitude, it.longitude)},
+                color = Color(0xFF1A73E8),
+                width = 8f
 
         )
 
@@ -213,15 +208,11 @@ fun TrackingMap(
                 state = MarkerState(
                     position = LatLng(point.latitude, point.longitude)
                 ),
-                title = "Dog",
-                icon = dogIcon,
-                tag = "tracking_marker"
-
+                title = "Dog"
             )
         }
     }
 }
-
 /**
  * Show statistics below the map
  */
@@ -245,7 +236,7 @@ fun TrackingStatistics(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(spacing.extraLarge),
         verticalArrangement = Arrangement.spacedBy(spacing.small)
     ) {

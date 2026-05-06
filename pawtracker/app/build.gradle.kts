@@ -1,3 +1,4 @@
+//apply(from = "jacoco.gradle.kts")
 
 plugins {
     alias(libs.plugins.android.application)
@@ -37,6 +38,8 @@ android {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
+
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -85,15 +88,13 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class")
 }
 
-// Jacoco configuration
 jacoco {
     toolVersion = "0.8.10"
 }
 
-// 🔹 Task: unpack classes.jar (AGP 8 puts classes inside this JAR)
+// unpack classes.jar
 tasks.register<Copy>("unpackJacocoClasses") {
 
-    // This task must run AFTER the JAR is created
     dependsOn("bundleDebugClassesToCompileJar")
 
     val classesJar = layout.buildDirectory.file(
@@ -105,11 +106,9 @@ tasks.register<Copy>("unpackJacocoClasses") {
     from(zipTree(classesJar))
     into(outputDir)
 }
-
-// 🔹 Task: FULL coverage report (unit + UI tests)
+//FULL coverage report (unit + UI tests)
 tasks.register<JacocoReport>("jacocoFullReport") {
 
-    // Order matters
     dependsOn(
         "testDebugUnitTest",              // Unit tests
         "connectedDebugAndroidTest",      // UI tests
@@ -142,7 +141,7 @@ tasks.register<JacocoReport>("jacocoFullReport") {
                 "**/com/example/pawtracker/ui/theme/**"
             )
 
-            // ⭐ EXCLUDE: stuff you don't want counted
+            //  don't want counted
             exclude(
                 "**/com/example/pawtracker/ui/components/**",
                 "**/com/example/pawtracker/mapper/**",
@@ -182,3 +181,5 @@ tasks.register<JacocoReport>("jacocoFullReport") {
         }
     )
 }
+
+
