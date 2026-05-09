@@ -1,10 +1,20 @@
-# PawTracker – Dog Activity Tracker
+![Project Banner](docs/images/banner.png)
 
 PawTracker is an Android application designed to help dog owners monitor and improve their dog’s daily physical activity.
 
 Dog owners often don’t know whether their pets are getting enough exercise, which can negatively affect their health. PawTracker provides a simple, visual interface that displays dog’s walking routes.
 
 Application uses the phone’s GPS to automatically record routes, calculate distance and duration, and store the data for long-term tracking.
+
+### Screenshots
+<p align="center">
+  <img src="docs/images/screenshot-onboarding.jpg" height="350px" />&nbsp;
+  <img src="docs/images/screenshot-tracking.jpg" height="350px" />&nbsp;
+  <img src="docs/images/screenshot-profile.jpg" height="350px" />&nbsp;
+  <img src="docs/images/screenshot-editprofile.jpg" height="350px" />&nbsp;
+  <img src="docs/images/screenshot-darktheme.jpg" height="350px" />
+</p>
+
 
 ### Core Features
 
@@ -16,48 +26,42 @@ Application uses the phone’s GPS to automatically record routes, calculate dis
 - **Unit Testing** – Tests for ViewModel logic and data handling
 
 
-### Optional Features
-
-- Dog profile with name, breed and profile picture
-- Dog breed API for recommended activity levels
-- Health log for tracking observations for wellbeing
-- Weather integration
-- Activity reminder notifications
-- AI-based weekly activity analysis
-
-
-
 ### Architecture
-- MVVM
-- StateFlow
+MVVM (ViewModel + StateFlow)
+
+<img src="docs/images/app-architecture.jpg" height="550px" />
 
 ### Technology Stack
 - **Language:** Kotlin
-- **UI:** Jetpack Compose
-- **Database:** Room
-- **Location Services:** GPS
-- **Maps:** Google Maps API
+- **UI:** Jetpack Compose with Material 3 & Navigation Component
+- **DI:** Custom Factory
+- **Local Database:** Room
+- **Preferences:** Jetpack DataStore
+- **Hardware & APIs:** Google Fused Location Provider, Google Maps SDK
+- **Testing:** JUnit 4 (Unit tests), Espresso (UI tests), Room Integration tests
+- **Design:** Figma, Adobe Firefly
+- **Project Management:** Jira
 
 
 ### Testing
-- JUnit
-- UI testing
+#### **Unit tests**
+`./gradlew test`
 
+#### **Instrumented tests & UI**
+`./gradlew connectedAndroidTest`
 
-### Tools
+#### **All tests:**
+`./gradlew check`
 
-- **IDE:** Android Studio
-- **Version Control:** GitHub
-- **Project Management:** Jira
-- **Design:** Figma, Adobe Firefly
-- **Communication:** Discord
+#### **Code Coverage Report:**
+`./gradlew jacocoTestReport`
+
 
 ---
 
 ## Getting Started
-
-
-### Installation
-
-```bash
-git clone https://github.com/meemmi/mobile-app-project.git
+1. Clone the repository
+2. Obtain a Google Maps API Key from [Google Cloud Console](https://console.cloud.google.com/)
+3. Create a `local.properties` file in the root folder and add:
+   `MAPS_API_KEY=YOUR_KEY`
+4. Build the project in Android Studio
