@@ -13,7 +13,11 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-
+/**
+ * GPS repository implementation using the Fused Location Provider.
+ * Handles permission checks, continuous location updates, and fetching
+ * the last known location, converting results into LocationPoint models.
+ */
 
 class GPSRepositoryImpl(
     private val context: Context

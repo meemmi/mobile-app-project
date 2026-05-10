@@ -1,6 +1,9 @@
 package com.example.pawtracker.ui.statistics
+/**
+ * UI state for the Statistics screen.
+ * Holds today's and week's walk data, daily goals, and dog profile info.
+ */
 
-// For testing
 data class StatisticsUiState(
     val todayDistance: Float = 0f,
     val todayDuration: Long = 0L,

@@ -14,8 +14,6 @@ import com.example.pawtracker.data.repository.GPSRepository
 import kotlin.math.*
 
 
-
-
 /**
  * Unified TrackingViewModel
  * - Uses GPSRepository for real GPS

@@ -1,6 +1,5 @@
 package com.example.pawtracker.ui.statistics
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawtracker.data.local.DogProfileEntity
@@ -13,10 +12,15 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+/**
+ * ViewModel for the Statistics screen.
+ * Loads today's and week's walk data and the dog's profile,
+ * then combines everything into a single UI state for the screen.
+ */
 
 class StatisticsViewModel(
-    private val walkRepository: WalkRepository,
-    private val profileRepository: DogProfileRepository
+    private val  walkRepository: WalkRepository,
+    private val  profileRepository: DogProfileRepository
 ) : ViewModel() {
 
     // Fetch walk statistics as individual flows

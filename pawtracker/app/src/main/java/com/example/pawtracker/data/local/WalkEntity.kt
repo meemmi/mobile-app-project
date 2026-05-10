@@ -4,7 +4,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * Room database entity for a single recorded walk
+ * Room entity representing a single recorded walk.
+ * Stores start/end timestamps, distance, duration, point count,
+ * and an optional preview polyline for map thumbnails.
  */
 @Entity(tableName = "walks", indices = [Index("startTime")])
 data class WalkEntity(

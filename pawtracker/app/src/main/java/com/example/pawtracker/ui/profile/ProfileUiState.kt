@@ -1,4 +1,9 @@
 package com.example.pawtracker.ui.profile
+/**
+ * UI state for the Profile screen.
+ * Holds all editable dog profile fields, including image, basic info,
+ * and daily/weekly activity goals.
+ */
 
 data class ProfileUiState(
     val imageUri: String = "",

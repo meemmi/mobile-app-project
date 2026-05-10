@@ -5,7 +5,10 @@ import com.example.pawtracker.data.repository.DogProfileRepository
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.Flow
 
-
+/**
+ * Fake repository for UI tests.
+ * Always returns the provided dog profile and ignores save operations.
+ */
 class FakeDogProfileRepository(
     private val profile: DogProfileEntity
 ) : DogProfileRepository {

@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,6 +35,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+/**
+ * Screen showing the user's past walks.
+ * Lets the user switch between daily and weekly history and displays the filtered list.
+ */
 
 @Composable
 fun HistoryScreen(
@@ -65,11 +68,12 @@ fun HistoryScreen(
 
             HistoryFilterTabs(
                 selected = uiState.filter,
-                onSelect = { viewModel.setFilter(it) }
+                onSelect = viewModel::setFilter
             )
             Spacer(modifier = Modifier.height(spacing.medium))
 
-            if (uiState.walks.isNullOrEmpty()) {
+            if (uiState.walks.isEmpty()) {
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

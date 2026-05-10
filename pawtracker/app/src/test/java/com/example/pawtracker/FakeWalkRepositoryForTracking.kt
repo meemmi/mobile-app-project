@@ -5,7 +5,12 @@ import com.example.pawtracker.data.local.WalkWithPoints
 import com.example.pawtracker.data.repository.WalkRepository
 import com.example.pawtracker.model.LocationPoint
 import kotlinx.coroutines.flow.flowOf
-
+/**
+ * Fake WalkRepository used in TrackingViewModel tests.
+ * Captures the walk and GPS points passed to insertWalkWithPoints,
+ * while all read operations return empty or null since tracking
+ * only cares about saving data, not loading history or statistics.
+ */
 class FakeWalkRepositoryForTracking : WalkRepository {
 
     var savedWalk: WalkEntity? = null

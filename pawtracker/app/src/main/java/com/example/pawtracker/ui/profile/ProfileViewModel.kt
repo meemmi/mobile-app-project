@@ -8,6 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for the Profile screen.
+ * Loads the saved dog profile and updates the UI state so fields show existing data.
+ */
 
 class ProfileViewModel(
     private val repository: DogProfileRepository

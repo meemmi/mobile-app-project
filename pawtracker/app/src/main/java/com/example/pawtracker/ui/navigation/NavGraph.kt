@@ -1,16 +1,12 @@
 package com.example.pawtracker.ui.navigation
-import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -30,6 +26,11 @@ import com.example.pawtracker.ui.statistics.StatisticsViewModel
 import com.example.pawtracker.ui.tracking.TrackingScreen
 import com.example.pawtracker.ui.tracking.TrackingViewModel
 import com.example.pawtracker.utils.ViewModelFactory
+/**
+ * App navigation graph.
+ * Sets the start destination based on onboarding status and connects
+ * each route to its screen and ViewModel.
+ */
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable

@@ -28,9 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +36,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
+/**
+ * Screen for editing the dog profile.
+ * Shows a vertical or horizontal layout depending on navigation type
+ * and allows the user to update profile fields and save changes.
+ */
 
 @Composable
 fun EditProfileScreen(

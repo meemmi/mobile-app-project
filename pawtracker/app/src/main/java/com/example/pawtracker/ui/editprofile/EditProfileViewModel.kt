@@ -11,6 +11,11 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+/**
+ * ViewModel for the Edit Profile screen.
+ * Loads the existing dog profile, keeps temporary editable state,
+ * and saves the updated profile back to the database.
+ */
 
 class EditProfileViewModel(
     private val repository: DogProfileRepository
@@ -61,10 +66,6 @@ class EditProfileViewModel(
     fun onWeightChange(value: String) = _uiState.update { it.copy(weight = value) }
     fun onDailyDistanceChange(value: String) = _uiState.update { it.copy(dailyDistanceGoal = value) }
     fun onDailyDurationChange(value: String) = _uiState.update { it.copy(dailyDurationGoal = value) }
-
-    fun onWeeklyDistanceChange(value: String) = _uiState.update { it.copy(weeklyDistanceGoal = value) }
-
-    fun onWeeklyDurationChange(value: String) = _uiState.update { it.copy(weeklyDurationGoal = value) }
 
 
     // Converts the temporary state back to an entity and saves it to the database

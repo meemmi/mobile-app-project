@@ -1,10 +1,5 @@
 package com.example.pawtracker.ui.profile
 
-// Compose core
-
-// Layout
-
-// Navigation padding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -37,6 +32,11 @@ import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 import androidx.compose.ui.platform.testTag
+/**
+ * ViewModel for the Profile screen.
+ * Loads the saved dog profile and fills the UI state with existing data,
+ * including daily activity goals (distance and duration).
+ */
 
 
 @Composable
@@ -272,7 +272,7 @@ fun ProfileHeader(
         Spacer(modifier = Modifier.height(spacing.medium))
 
         Text(
-            text = if (name.isNotEmpty()) name else stringResource(R.string.profile_name_empty),
+            text = name.ifEmpty { stringResource(R.string.profile_name_empty) },
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag("profile_name")

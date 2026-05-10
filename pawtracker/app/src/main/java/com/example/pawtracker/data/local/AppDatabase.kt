@@ -6,7 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-
+/**
+ * Main Room database for the app.
+ * Provides DAOs and handles migrations for walks, GPS points, and dog profile data.
+ */
 
 @Database(entities = [WalkEntity::class, GpsPointEntity::class, DogProfileEntity::class], version = 6)
 abstract class AppDatabase : RoomDatabase() {
@@ -22,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "pawtracker_db"
+                    "paw tracker_db"
                 )
                     .addMigrations(MIGRATION_1_2)
                     .fallbackToDestructiveMigration(true)

@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -23,10 +22,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.Screen
+/**
+ * Bottom navigation bar for phones.
+ * Hidden on the onboarding screen and highlights the current route.
+ */
 
 
 @Composable
-fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) {
+fun NavBar(navController: NavHostController, hasCompletedOnboarding
+: Boolean) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -41,7 +45,8 @@ fun NavBar(navController: NavHostController, has_completed_onboarding: Boolean) 
             NavigationBarItem(
                 selected = currentRoute == Screen.Statistics.route,
                 onClick = {
-                    val target = if (has_completed_onboarding) Screen.Statistics.route else Screen.Main.route
+                    val target = if (hasCompletedOnboarding
+                    ) Screen.Statistics.route else Screen.Main.route
                     navController.navigate(target) {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
