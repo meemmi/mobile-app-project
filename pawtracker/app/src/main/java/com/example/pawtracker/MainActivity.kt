@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                             if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
                                 NavBar(
                                     navController,
-                                    has_completed_onboarding = mainViewModel.hasCompletedOnboarding ?: false
+                                    hasCompletedOnboarding = mainViewModel.hasCompletedOnboarding ?: false
                                 )
                             }
                         }
