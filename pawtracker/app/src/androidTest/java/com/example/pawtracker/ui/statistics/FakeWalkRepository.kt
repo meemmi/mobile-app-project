@@ -6,7 +6,11 @@ import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.data.local.WalkWithPoints
 import kotlinx.coroutines.flow.Flow
-
+/**
+ * Fake WalkRepository for UI tests.
+ * Supplies fixed statistics values and returns empty history data.
+ * All write operations are no-ops.
+ */
 
 class FakeWalkRepository(
     private val todayDistance: Float,

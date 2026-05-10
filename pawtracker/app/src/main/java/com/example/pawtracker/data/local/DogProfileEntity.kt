@@ -2,7 +2,10 @@ package com.example.pawtracker.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
+/**
+ * Room entity storing the dog's profile.
+ * Contains basic info (name, breed, age, size) and daily/weekly activity goals.
+ */
 @Entity(tableName = "dog_profile")
 data class DogProfileEntity(
     @PrimaryKey val id: Int = 0,

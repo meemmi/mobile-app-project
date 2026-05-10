@@ -7,7 +7,11 @@ import com.example.pawtracker.model.LocationPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlin.collections.emptyList
-
+/**
+ * Fake WalkRepository for history tests.
+ * Returns a predefined list of walks for filtering logic,
+ * while all statistics and write operations return empty or no-op.
+ */
 class FakeWalkRepositoryForHistory(
     private val walks: List<WalkEntity> = emptyList()
 ) : WalkRepository {

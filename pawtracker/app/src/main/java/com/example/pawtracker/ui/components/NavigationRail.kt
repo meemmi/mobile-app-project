@@ -3,12 +3,10 @@ package com.example.pawtracker.ui.components
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
@@ -23,6 +21,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.navigation.Screen
+/**
+ * Navigation rail for large screens.
+ * Shown only after onboarding is completed and highlights the current route.
+ */
 
 @Composable
 fun NavigationRail(
@@ -33,7 +35,6 @@ fun NavigationRail(
 ) {
     if (!hasCompletedOnboarding) return
 
-    // Haetaan nykyinen reitti, jotta voimme merkitä valitun ikonin
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -43,7 +44,6 @@ fun NavigationRail(
 
         Spacer(Modifier.weight(1f))
 
-        // 1. TILASTOT
         NavigationRailItem(
             selected = currentRoute == Screen.Statistics.route,
             onClick = {
@@ -59,7 +59,6 @@ fun NavigationRail(
             label = { Text("stats") }
         )
 
-        // 2. KARTTA / SEURANTA
         NavigationRailItem(
             selected = currentRoute == Screen.Tracking.route,
             onClick = {
@@ -75,7 +74,6 @@ fun NavigationRail(
             label = { Text("map") }
         )
 
-        // 3. HISTORIA
         NavigationRailItem(
             selected = currentRoute == Screen.History.route,
             onClick = {
@@ -91,7 +89,6 @@ fun NavigationRail(
             label = { Text("history") }
         )
 
-        // 4. PROFIILI
         NavigationRailItem(
             selected = currentRoute == Screen.Profile.route,
             onClick = {

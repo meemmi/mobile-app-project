@@ -5,7 +5,12 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-
+/**
+ * DAO for accessing walk data.
+ * Supports inserting walks and GPS points, deleting walks,
+ * querying history (all/today/week), retrieving a walk with its points,
+ * and computing distance/duration statistics.
+ */
 @Dao
 interface WalkDao {
     @Insert

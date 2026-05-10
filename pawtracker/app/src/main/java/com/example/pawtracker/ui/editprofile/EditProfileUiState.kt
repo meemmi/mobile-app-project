@@ -1,4 +1,8 @@
 package com.example.pawtracker.ui.editprofile
+/**
+ * UI state for the Edit Profile screen.
+ * Stores all editable profile fields and temporary values before saving.
+ */
 
 data class EditProfileUiState(
     val imageUri: String = "",

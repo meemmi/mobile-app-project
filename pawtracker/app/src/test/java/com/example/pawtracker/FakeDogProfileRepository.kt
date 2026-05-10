@@ -3,7 +3,10 @@ package com.example.pawtracker
 import com.example.pawtracker.data.local.DogProfileEntity
 import com.example.pawtracker.data.repository.DogProfileRepository
 import kotlinx.coroutines.flow.flowOf
-
+/**
+ * Fake DogProfileRepository for statistics and ViewModel tests.
+ * Always returns a fixed dog profile and ignores save operations.
+ */
 class FakeDogProfileRepository : DogProfileRepository {
 
     override fun getProfile() = flowOf(
@@ -19,4 +22,5 @@ class FakeDogProfileRepository : DogProfileRepository {
 
     override suspend fun saveProfile(profile: DogProfileEntity) {}
 }
+
 

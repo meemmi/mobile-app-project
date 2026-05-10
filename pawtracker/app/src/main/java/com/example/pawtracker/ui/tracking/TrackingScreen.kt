@@ -2,7 +2,6 @@ package com.example.pawtracker.ui.tracking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,12 +24,10 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,7 +36,6 @@ import com.example.pawtracker.R
 import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -50,6 +45,26 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+/**
+ * TrackingScreen – Main UI for live dog tracking.
+ *
+ * This file contains all composables used to display the tracking experience:
+ * - A Google Map showing the dog's current location and traveled route
+ * - A statistics card displaying distance and duration
+ * - Start/Stop controls for beginning or ending a tracking session
+ *
+ * The screen observes state from [TrackingViewModel] via [TrackingUiState].
+ * It updates the map, polyline, and marker in real time as GPS points arrive.
+ *
+ * Composables included:
+ * - TrackingScreen: Entry point that collects UI state
+ * - TrackingLayout: Chooses layout based on navigation type (bottom nav or rail)
+ * - TrackingMap: Renders Google Map, polyline, and current location marker
+ * - TrackingStatistics: Shows distance and duration in a styled card
+ * - ControlButtons: Start/Stop tracking actions
+ *
+ * This screen is responsible only for UI. All tracking logic is handled in the ViewModel.
+ */
 
 
 @Composable
@@ -71,9 +86,6 @@ fun TrackingScreen(
     )
 }
 
-/**
- * Layout: Map + stats + control buttons
- */
 @Composable
 fun TrackingLayout(
     uiState: TrackingUiState,
@@ -306,7 +318,7 @@ fun ControlButtons(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
 
         ) {
-            Text(stringResource(R.string.tracking_start), style = MaterialTheme.typography.titleMedium,)
+            Text(stringResource(R.string.tracking_start), style = MaterialTheme.typography.titleMedium)
         }
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -318,7 +330,7 @@ fun ControlButtons(
                 .testTag("tracking_stop_button"),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(stringResource(R.string.tracking_stop), style = MaterialTheme.typography.titleMedium,)
+            Text(stringResource(R.string.tracking_stop), style = MaterialTheme.typography.titleMedium)
         }
     }
 }

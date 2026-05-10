@@ -5,7 +5,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-
+/**
+ * DAO for accessing and updating the dog profile.
+ * Exposes the profile as a Flow and supports upsert operations.
+ */
 @Dao
 interface DogProfileDao {
 

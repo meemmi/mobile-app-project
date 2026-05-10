@@ -9,6 +9,10 @@ import com.example.pawtracker.data.mapper.toUiModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Calendar
+/**
+ * ViewModel for the History screen.
+ * Loads all saved walks, caches them, and applies daily/weekly filters instantly.
+ */
 
 class HistoryViewModel(
     private val repository: WalkRepository

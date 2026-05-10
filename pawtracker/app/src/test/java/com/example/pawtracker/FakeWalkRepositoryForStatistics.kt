@@ -4,9 +4,12 @@ import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.data.local.WalkWithPoints
 import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.data.repository.WalkRepository
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-
+/**
+ * Fake WalkRepository for statistics tests.
+ * Provides fixed distance and duration values for today and this week,
+ * while all history and write operations return empty or no-op.
+ */
 class FakeWalkRepositoryForStatistics : WalkRepository {
 
     override fun getTodayDistance() = flowOf(2000f)   // 2 km

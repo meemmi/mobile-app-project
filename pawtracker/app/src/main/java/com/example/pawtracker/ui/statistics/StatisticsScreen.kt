@@ -27,10 +27,14 @@ import com.example.pawtracker.ui.navigation.NavigationType
 import com.example.pawtracker.ui.theme.LocalSpacing
 import com.example.pawtracker.ui.theme.Spacing
 import androidx.compose.ui.platform.testTag
+/**
+ * UI for the Statistics screen.
+ * Shows the dog profile, today's stats, weekly progress, and a start-walk button.
+ * Layout adapts automatically between vertical and horizontal navigation types.
+ */
 
 
 // ---------------------- SCREEN ----------------------
-
 @Composable
 fun StatisticsScreen(
     viewModel: StatisticsViewModel,
@@ -87,7 +91,7 @@ fun VerticalStatisticsContent(
 
         Spacer(modifier = Modifier.height(spacing.extraLarge))
 
-        TodayProgressChart(state.todayDistance, state.goalDistance.toFloat(), Modifier.size(200.dp))
+        TodayProgressChart(state.todayDistance, state.goalDistance, Modifier.size(200.dp))
 
         Text(
             text = stringResource(R.string.stats_progress_comparison_format, state.todayDistance, state.goalDistance),
@@ -132,7 +136,7 @@ fun HorizontalStatisticsContent(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TodayProgressChart(state.todayDistance, state.goalDistance.toFloat(), Modifier.size(180.dp))
+            TodayProgressChart(state.todayDistance, state.goalDistance, Modifier.size(180.dp))
             Text(stringResource(R.string.stats_progress_comparison_format, state.todayDistance, state.goalDistance), modifier = Modifier.padding(top = spacing.medium))
         }
     }
@@ -229,35 +233,7 @@ fun TodayProgressChart(today: Float, goal: Float, modifier: Modifier = Modifier)
         )
     }
 }
-
 // ---------------------- STAT CARD ----------------------
-
-/*@Composable
-fun StatisticsCard(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.primary
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(LocalSpacing.current.medium)
-    ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            color = color
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}*/
 @Composable
 fun StatisticsCard(
     value: String,

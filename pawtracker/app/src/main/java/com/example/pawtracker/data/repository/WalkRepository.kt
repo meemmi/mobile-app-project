@@ -4,7 +4,11 @@ import com.example.pawtracker.data.local.WalkEntity
 import com.example.pawtracker.data.local.WalkWithPoints
 import com.example.pawtracker.model.LocationPoint
 import kotlinx.coroutines.flow.Flow
-
+/**
+ * Repository interface for accessing walk data.
+ * Provides flows for history and statistics, detailed walk retrieval,
+ * and functions to insert or delete walks with their GPS points.
+ */
 interface WalkRepository {
     fun getAllWalks(): Flow<List<WalkEntity>>
     fun getTodayWalks(): Flow<List<WalkEntity>>

@@ -2,7 +2,6 @@ package com.example.pawtracker
 
 import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.ui.tracking.TrackingViewModel
-import com.example.pawtracker.data.repository.GPSRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

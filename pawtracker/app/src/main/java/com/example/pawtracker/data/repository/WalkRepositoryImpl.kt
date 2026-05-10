@@ -6,7 +6,11 @@ import com.example.pawtracker.data.local.WalkWithPoints
 import com.example.pawtracker.data.local.GpsPointEntity
 import com.example.pawtracker.model.LocationPoint
 import com.example.pawtracker.utils.TimeUtils
-
+/**
+ * Repository implementation for walk data.
+ * Provides history and statistics by delegating queries to the DAO,
+ * and handles inserting walks together with their GPS points.
+ */
 class WalkRepositoryImpl(
     private val dao: WalkDao
 ) : WalkRepository {
@@ -23,7 +27,6 @@ class WalkRepositoryImpl(
         return dao.getWalkWithPoints(walkId)
     }
 
-    // Statistics
     override fun getTodayDistance() =
         dao.getTotalDistanceSince(TimeUtils.getStartOfDay())
 
@@ -40,10 +43,9 @@ class WalkRepositoryImpl(
         walk: WalkEntity,
         points: List<LocationPoint>
     ) {
-        // 1. Insert parent row
+
         val walkId = dao.insertWalk(walk)
 
-        // 2. Convert to DB entities
         val pointEntities = points.mapIndexed { index, point ->
             GpsPointEntity(
                 walkId = walkId,
@@ -54,7 +56,6 @@ class WalkRepositoryImpl(
             )
         }
 
-        // 3. Insert all points
         dao.insertPoints(pointEntities)
     }
 

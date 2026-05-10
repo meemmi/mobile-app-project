@@ -1,5 +1,9 @@
 package com.example.pawtracker.data.local
-
+/**
+ * Room entity storing individual GPS points for a walk.
+ * Each point belongs to a walk (via walkId), is ordered by sequence,
+ * and contains timestamped latitude/longitude coordinates.
+ */
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -20,6 +24,7 @@ import androidx.room.PrimaryKey
         Index(value = ["walkId", "sequence"])
     ]
 )
+
 
 
 data class GpsPointEntity(
